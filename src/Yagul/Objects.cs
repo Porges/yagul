@@ -1,7 +1,10 @@
 ﻿using JetBrains.Annotations;
 
-namespace Porges.Absent
+namespace Yagul
 {
+    /// <summary>
+    /// Methods so generic that they don't belong anywhere else.
+    /// </summary>
     public static class Objects
     {
         /// <summary>

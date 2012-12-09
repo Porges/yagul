@@ -1,7 +1,7 @@
 ﻿using System;
 using JetBrains.Annotations;
 
-namespace Porges.Absent.Extensions
+namespace Yagul.Extensions
 {
     public static class EventExtensions
     {

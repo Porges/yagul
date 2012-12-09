@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
 using JetBrains.Annotations;
 
-namespace Porges.Absent.Extensions
+using PureAttribute = System.Diagnostics.Contracts.PureAttribute;
+
+namespace Yagul.Extensions
 {
     /// <summary>
     /// Extension methods based upon the <see cref="IDictionary{TKey,TValue}"/> class.
@@ -17,6 +19,7 @@ namespace Porges.Absent.Extensions
         /// <param name="key">The key.</param>
         /// <param name="defaultValue">A default value to return if the key is not present in the dictionary.</param>
         /// <returns>Either the matching value for the key, or the default value.</returns>
+        [Pure]
         [PublicAPI]
         public static TValue GetValueOrDefault<TKey, TValue>([NotNull] this IDictionary<TKey, TValue> @this, TKey key, TValue defaultValue = default(TValue))
         {
@@ -34,15 +37,15 @@ namespace Porges.Absent.Extensions
         /// <typeparam name="TValue">The value type.</typeparam>
         /// <param name="this">The dictionary.</param>
         /// <param name="key">The key.</param>
-        /// <param name="defaultValue">A default value to return if the key is not present in the dictionary.</param>
-        /// <returns>Either the matching value for the key, or the default value.</returns>
+        /// <param name="value">A value to add and return if the key is not present in the dictionary.</param>
+        /// <returns>Either the matching value for the key, or the provided value.</returns>
         [PublicAPI]
-        public static TValue GetValueOrCreate<TKey, TValue>([NotNull] this IDictionary<TKey, TValue> @this, TKey key, TValue defaultValue = default(TValue))
+        public static TValue GetValueOrCreate<TKey, TValue>([NotNull] this IDictionary<TKey, TValue> @this, TKey key, TValue value = default(TValue))
         {
             TValue result;
             if (!@this.TryGetValue(key, out result))
             {
-                @this[key] = result = defaultValue;
+                @this[key] = result = value;
             }
 
             return result;

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using JetBrains.Annotations;
 
-namespace Porges.Absent.Extensions
+namespace Yagul.Extensions
 {
     /// <summary>
     /// Extension methods based upon the <see cref="IList{T}"/> interface.
