@@ -1,10 +1,20 @@
 ﻿using System.Collections;
-using Apparser;
+using System.IO;
 
-namespace ConsoleApplication1
+namespace Apparser.Input
 {
-    class StringParser : IParserInput<char, int>
+    public class StringParser : IParserInput<char, StringParser.State>
     {
+        public struct State
+        {
+            internal readonly int Index;
+
+            internal State(int index)
+            {
+                Index = index;
+            }
+        }
+
         private int _position = -1;
         private readonly string _input;
         public StringParser(string input)
@@ -18,14 +28,14 @@ namespace ConsoleApplication1
             _position = parser._position;
         }
 
-        public int Save()
+        public State Save()
         {
-            return _position;
+            return new State(_position);
         }
 
-        public void Restore(int save)
+        public void Restore(State save)
         {
-            _position = save;
+            _position = save.Index;
         }
 
         public void Dispose()
