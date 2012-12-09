@@ -25,6 +25,7 @@ namespace ConsoleApplication1
             if (b == -1)
                 return false;
             _current = (byte)b;
+            return true;
         }
 
         public void Reset()
