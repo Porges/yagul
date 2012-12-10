@@ -12,6 +12,9 @@ namespace Yagul.Types
         } 
     }
 
+    /// <summary>
+    /// A Unit type for C#. Void is not usable for many things.
+    /// </summary>
     [PublicAPI]
     public class Unit
     {

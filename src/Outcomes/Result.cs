@@ -81,7 +81,7 @@ namespace Outcomes
             this Result<TFail, TSuccess> me, Func<TSuccess, Result<TFail, TNewSuccess>> projection,
             Func<TSuccess, TNewSuccess, TFinalSuccess> finalProjection)
         {
-            return me.SelectMany(x => projection(x).Select(y => finalProjection(x, y)));
+            return me.SelectManySuccess(x => projection(x).SelectSuccess(y => finalProjection(x, y)));
         }
     }
 

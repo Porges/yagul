@@ -41,8 +41,20 @@
   <ItemGroup>
     <Compile Include="Input\StreamParser.cs" />
     <Compile Include="Input\StringParser.cs" />
-    <Compile Include="Success.cs" />
-    <Compile Include="Parser.cs" />
+    <Compile Include="Parser\Combinators\AnyValue.cs" />
+    <Compile Include="Parser\Combinators\App.cs" />
+    <Compile Include="Parser\Combinators\Between.cs" />
+    <Compile Include="Parser\Combinators\Bind.cs" />
+    <Compile Include="Parser\Combinators\Success.cs" />
+    <Compile Include="Input\IParserInput.cs" />
+    <Compile Include="Parser\Combinators\EOFValue.cs" />
+    <Compile Include="Parser\Combinators\Many.cs" />
+    <Compile Include="Parser\Combinators\EitherOf.cs" />
+    <Compile Include="Parser\Combinators\Exactly.cs" />
+    <Compile Include="Parser\Combinators\Fail.cs" />
+    <Compile Include="Parser\Parser.cs" />
+    <Compile Include="Parser\Combinators\Then.cs" />
+    <Compile Include="Parser\Combinators\Satisfy.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
