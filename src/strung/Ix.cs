@@ -1,6 +1,8 @@
-﻿namespace Strung
+﻿using System;
+
+namespace Strung
 {
-    public struct Ix<T>
+    public struct Ix<T> : IEquatable<Ix<T>>
     {
         private readonly int _value;
 
@@ -32,6 +34,11 @@
         public static implicit operator Ix<T>(int value)
         {
             return new Ix<T>(value);
+        }
+
+        public bool Equals(Ix<T> other)
+        {
+            return _value == other._value;
         }
     }
 }
