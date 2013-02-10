@@ -4,20 +4,25 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
 using JetBrains.Annotations;
+using Yagul;
 using Yagul.Extensions;
 
 namespace Strung
 {
+
     [PublicAPI]
     public class EncodedString<T> : IEquatable<EncodedString<T>>, IReadOnlyList<byte>, IReadOnlyList<UChar> where T : Encoding, new()
     {
         [NotNull] internal byte[] _bytes;
 
-        public EncodedString() : this(new byte[0])
+        public EncodedString() : this(Arrays<byte>.Empty)
         { }
 
-        public EncodedString(string other) : this(new T().GetBytes(other))
-        { }
+        public EncodedString(string other) : this(other.Length == 0 ? Arrays<byte>.Empty : new T().GetBytes(other))
+        {
+            if (other == null)
+                throw new ArgumentNullException("other");
+        }
         
         internal EncodedString(byte[] bytes)
         {
@@ -51,14 +56,29 @@ namespace Strung
         {
             return Concat(left, right);
         }
-        
+
+        public static bool operator ==(EncodedString<T> left, EncodedString<T> right)
+        {
+            return Equals(left, right);
+        }
+
+        public static bool operator !=(EncodedString<T> left, EncodedString<T> right)
+        {
+            return !(left == right);
+        }
+
         public override bool Equals(object obj)
         {
             return Equals(obj as EncodedString<T>);
         }
 
+        public static implicit operator EncodedString<T>(string input) 
+        {
+            return new EncodedString<T>(input);
+        }
+
         public Count<byte> CountBytes { get { return _bytes.Length; } }
-        public Count<UChar> CountChars { get { throw new NotImplementedException(); } } 
+        public Count<UChar> CountChars { get { return new T().GetCharCount(_bytes); } } 
 
         /// <summary>
         /// Returns the byte at the specified index.
