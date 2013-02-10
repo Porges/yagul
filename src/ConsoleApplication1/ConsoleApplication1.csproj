@@ -57,6 +57,10 @@
       <Project>{9F56F06F-3E3E-4756-8FEF-D2B5B291E918}</Project>
       <Name>Outcomes</Name>
     </ProjectReference>
+    <ProjectReference Include="..\strung\Strung.csproj">
+      <Project>{A39E9313-4B3E-484D-8F81-B8CE8CC969C3}</Project>
+      <Name>Strung</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Yagul\Yagul.csproj">
       <Project>{cd504ced-8111-4c56-88f4-cb4b7c3948ec}</Project>
       <Name>Yagul</Name>

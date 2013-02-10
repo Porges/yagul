@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Apparser;
 using Apparser.Parser;
 using Outcomes;
+using Strung;
 
 namespace ConsoleApplication1
 {
