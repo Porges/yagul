@@ -32,8 +32,7 @@ namespace ConsoleApplication1
                 = (Parser.ExactSequence<string, char>("hello")
                    | Parser.Satisfy<char>(char.IsWhiteSpace).Select(c => c.ToString())
                    | Parser.ExactSequence<string, char>("world")
-                   | Parser.Exactly('w').Select(c => c.ToString()))
-                   .Many();
+                   | Parser.Exactly('w').Select(c => c.ToString())).Many();
 
             var result = parser
                 .RunWithResult(new StringParser(" wworldhello"));
