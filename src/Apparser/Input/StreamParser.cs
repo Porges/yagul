@@ -1,18 +1,34 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.IO;
-using Apparser.Parser;
 
 namespace Apparser.Input
 {
-    public class StreamParser : IParserInput<byte, StreamParser.StreamParserState>
+    public class StreamParser : IParserInput<byte, StreamParser.State>
     {
-        public struct StreamParserState
+        public struct State : IEquatable<State>
         {
             internal readonly long Position;
 
-            internal StreamParserState(long position)
+            internal State(long position)
             {
                 Position = position;
+            }
+
+            public override bool Equals(object obj)
+            {
+                var state = obj as State?;
+                return state.HasValue && Equals(state.Value);
+            }
+
+            public override int GetHashCode()
+            {
+                return Position.GetHashCode();
+            }
+
+            public bool Equals(State other)
+            {
+                return Position == other.Position;
             }
         }
 
@@ -50,12 +66,12 @@ namespace Apparser.Input
             get { return Current; }
         }
 
-        public StreamParserState Save()
+        public State Save()
         {
-            return new StreamParserState(_stream.Position);
+            return new State(_stream.Position);
         }
 
-        public void Restore(StreamParserState save)
+        public void Restore(State save)
         {
             _stream.Position = save.Position;
         }

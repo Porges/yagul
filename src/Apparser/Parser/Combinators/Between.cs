@@ -1,10 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Apparser.Input;
 using Outcomes;
 
 namespace Apparser.Parser.Combinators
 {
-    internal sealed class Until<TIn, TOut> : Parser<TIn, IList<TOut>>
+    internal sealed class Until<TIn, TOut> : Parser<TIn, IList<TOut>>, IEquatable<Until<TIn, TOut>>
     {
         private readonly Parser<TIn, TOut> _repeat;
         private readonly Parser<TIn> _end;
@@ -39,6 +40,18 @@ namespace Apparser.Parser.Combinators
             }
 
             return list;
+        }
+
+        public override bool Equals(Parser<TIn> other)
+        {
+            return Equals(other as Until<TIn, TOut>);
+        }
+
+        public bool Equals(Until<TIn, TOut> other)
+        {
+            return other != null &&
+                   Equals(_end, other._end) &&
+                   Equals(_repeat, other._repeat);
         }
     }
 }

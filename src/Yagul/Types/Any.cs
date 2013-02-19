@@ -1,4 +1,5 @@
-﻿using JetBrains.Annotations;
+﻿using System;
+using JetBrains.Annotations;
 
 namespace Yagul.Types
 {
@@ -16,17 +17,26 @@ namespace Yagul.Types
     /// A Unit type for C#. Void is not usable for many things.
     /// </summary>
     [PublicAPI]
-    public class Unit
+    public struct Unit : IEquatable<Unit>
     {
-        private static readonly Unit _it = new Unit();
-
-        private Unit()
+        public bool Equals(Unit other)
         {
+            return true;
         }
 
-        public static Unit It
+        public override int GetHashCode()
         {
-            get { return _it; }
+            return 0;
+        }
+
+        public override bool Equals(object obj)
+        {
+            return obj is Unit;
+        }
+
+        public override string ToString()
+        {
+            return "()";
         }
     }
 }

@@ -1,20 +1,32 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text;
 using Apparser.Input;
 using Apparser.Parser.Combinators;
 using Outcomes;
-using Yagul.Extensions;
 using Yagul.Types;
 
 namespace Apparser.Parser
 {
-    public abstract class Parser<TIn>
+    public abstract class Parser<TIn> : IEquatable<Parser<TIn>>
     {
-        public abstract Result<string, Unit> Run<TSave>(IParserInput<TIn, TSave> input);
+        public abstract Result<string, Unit> Run<TSave>(IParserInput<TIn, TSave> input) where TSave : IEquatable<TSave>;
 
         public static Parser<TIn> operator |(Parser<TIn> left, Parser<TIn> right)
         {
-            return new EitherOf<TIn>(left, right);
+            return left.OrElse(right);
+        }
+
+        public abstract bool Equals(Parser<TIn> other);
+
+        public virtual Parser<TIn> OrElse(Parser<TIn> other)
+        {
+            return EitherOf<TIn>.Create(this, other);
+        }
+
+        public virtual Parser<TIn> Many(int min = 0, int max = int.MaxValue)
+        {
+            return Many<TIn>.Create(this, min, max);
         }
     }
     
@@ -27,18 +39,28 @@ namespace Apparser.Parser
         /// <typeparam name="TSave"></typeparam>
         /// <param name="input">The input source.</param>
         /// <returns>A <see cref="Result{TFail,TSuccess}"/> representing the parse result.</returns>
-        public sealed override Result<string, Unit> Run<TSave>(IParserInput<TIn, TSave> input)
+        public override Result<string, Unit> Run<TSave>(IParserInput<TIn, TSave> input)
         {
-            return RunWithResult(input).SelectSuccess(_ => Unit.It);
+            return RunWithResult(input).SelectSuccess(_ => default(Unit));
         }
 
-        public abstract Result<string, TOut> RunWithResult<TSave>(IParserInput<TIn,TSave> input);
+        public abstract Result<string, TOut> RunWithResult<TSave>(IParserInput<TIn,TSave> input) where TSave : IEquatable<TSave>;
 
         public static Parser<TIn, TOut> operator |(Parser<TIn, TOut> left, Parser<TIn, TOut> right)
         {
-            return new EitherOf<TIn, TOut>(left, right);
+            return left.OrElse(right);
         }
 
+        public virtual new Parser<TIn, IList<TOut>> Many(int min = 0, int max = int.MaxValue)
+        {
+            return Many<TIn, TOut>.Create(this, min, max);
+        }
+
+        public virtual new Parser<TIn, TOut> OrElse(Parser<TIn, TOut> other)
+        {
+            return EitherOf<TIn, TOut>.Create(this, other);
+        }
+        
         ///// <summary>
         ///// We are allowed to make a parser with ignored output a parser returning any type.
         ///// 
@@ -77,7 +99,7 @@ namespace Apparser.Parser
     {
         public static Parser<T, T> Any<T>()
         {
-            return AnyValue<T>.Instance;
+            return AnyValue<T>.Create();
         }
 
         public static Parser<T, TSeq> ExactSequence<TSeq, T>(TSeq items)
@@ -136,11 +158,10 @@ namespace Apparser.Parser
             return new Exactly<T>(item);
         }
 
-        public static Parser<T, T> Satisfy<T>(Predicate<T> predicate)
+        public static Parser<T, T> Satisfy<T>(Func<T, bool> predicate)
         {
             return new Satisfy<T>(predicate);
         }
-
 
         public static Parser<TIn> Then<TIn>(this Parser<TIn> first, Parser<TIn> second)
         {
@@ -155,11 +176,6 @@ namespace Apparser.Parser
         public static Parser<TIn> EOF<TIn>()
         {
             return EOFValue<TIn>.Instance;
-        }
-
-        public static Parser<TIn, IList<TOut>> Many<TIn, TOut>(this Parser<TIn, TOut> parser, int min = 0, int max = int.MaxValue)
-        {
-            return new Many<TIn, TOut>(parser, min, max);
         }
 
         public static Parser<TIn, TOut> ApplyTo<TIn, TMid, TOut>(this Func<TMid, TOut> projection,

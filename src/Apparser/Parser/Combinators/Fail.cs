@@ -1,10 +1,11 @@
+using System;
 using Apparser.Input;
 using Outcomes;
 using Yagul.Types;
 
 namespace Apparser.Parser.Combinators
 {
-    internal sealed class Fail<T> : Parser<T>
+    internal sealed class Fail<T> : Parser<T>, IEquatable<Fail<T>>
     {
         private readonly string _message;
 
@@ -21,6 +22,16 @@ namespace Apparser.Parser.Combinators
         public override Result<string, Unit> Run<TSave>(IParserInput<T,TSave> input)
         {
             return _message;
+        }
+
+        public override bool Equals(Parser<T> other)
+        {
+            return Equals(other as Fail<T>);
+        }
+
+        public bool Equals(Fail<T> other)
+        {
+            return other != null;
         }
     }
 }

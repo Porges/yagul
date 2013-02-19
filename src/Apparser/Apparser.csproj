@@ -52,6 +52,7 @@
     <Compile Include="Parser\Combinators\EitherOf.cs" />
     <Compile Include="Parser\Combinators\Exactly.cs" />
     <Compile Include="Parser\Combinators\Fail.cs" />
+    <Compile Include="Parser\Combinators\While.cs" />
     <Compile Include="Parser\Parser.cs" />
     <Compile Include="Parser\Combinators\Then.cs" />
     <Compile Include="Parser\Combinators\Satisfy.cs" />

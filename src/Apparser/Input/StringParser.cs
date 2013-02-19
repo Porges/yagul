@@ -1,18 +1,33 @@
-﻿using System.Collections;
-using System.IO;
-using Apparser.Parser;
+﻿using System;
+using System.Collections;
 
 namespace Apparser.Input
 {
     public class StringParser : IParserInput<char, StringParser.State>
     {
-        public struct State
+        public struct State : IEquatable<State>
         {
             internal readonly int Index;
 
             internal State(int index)
             {
                 Index = index;
+            }
+
+            public override bool Equals(object obj)
+            {
+                var state = obj as State?;
+                return state.HasValue && Equals(state.Value);
+            }
+
+            public override int GetHashCode()
+            {
+                return Index;
+            }
+
+            public bool Equals(State other)
+            {
+                return Index == other.Index;
             }
         }
 

@@ -64,7 +64,7 @@ namespace Outcomes
 
         public static Result<Any, Unit> Success()
         {
-            return new Success<Any, Unit>(Unit.It);
+            return new Success<Any, Unit>(default(Unit));
         }
 
         public static Result<TFail, TNewSuccess> Select<TFail, TSuccess, TNewSuccess>(this Result<TFail, TSuccess> me, Func<TSuccess, TNewSuccess> projection)

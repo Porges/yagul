@@ -1,9 +1,10 @@
+using System;
 using Apparser.Input;
 using Outcomes;
 
 namespace Apparser.Parser.Combinators
 {
-    internal sealed class Exactly<TIn> : Parser<TIn, TIn>
+    internal sealed class Exactly<TIn> : Parser<TIn, TIn>, IEquatable<Exactly<TIn>>
     {
         private readonly TIn _item;
 
@@ -21,6 +22,17 @@ namespace Apparser.Parser.Combinators
                 return _item;
 
             return string.Format("Expected '{0}', got '{1}'.", _item, input.Current);
+        }
+
+        public override bool Equals(Parser<TIn> other)
+        {
+            return Equals(other as Exactly<TIn>);
+        }
+
+        public bool Equals(Exactly<TIn> other)
+        {
+            return other != null
+                   && Equals(_item, other._item);
         }
     }
 }

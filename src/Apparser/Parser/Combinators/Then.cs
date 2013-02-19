@@ -1,10 +1,11 @@
+using System;
 using Apparser.Input;
 using Outcomes;
 using Yagul.Types;
 
 namespace Apparser.Parser.Combinators
 {
-    internal sealed class Then<TIn> : Parser<TIn>
+    internal sealed class Then<TIn> : Parser<TIn>, IEquatable<Then<TIn>>
     {
         private readonly Parser<TIn> _first;
         private readonly Parser<TIn> _second;
@@ -21,9 +22,21 @@ namespace Apparser.Parser.Combinators
                 .Run(input)
                 .SelectManySuccess(_ => _second.Run(input));
         }
+
+        public override bool Equals(Parser<TIn> other)
+        {
+            return Equals(other as Then<TIn>);
+        }
+
+        public bool Equals(Then<TIn> other)
+        {
+            return other != null &&
+                   Equals(_first, other._first) &&
+                   Equals(_second, other._second);
+        }
     }
 
-    internal sealed class Then<TIn, TOut> : Parser<TIn, TOut>
+    internal sealed class Then<TIn, TOut> : Parser<TIn, TOut>, IEquatable<Then<TIn, TOut>>
     {
         private readonly Parser<TIn> _first;
         private readonly Parser<TIn, TOut> _second;
@@ -39,6 +52,18 @@ namespace Apparser.Parser.Combinators
             return _first
                 .Run(input)
                 .SelectManySuccess(_ => _second.RunWithResult(input));
+        }
+
+        public override bool Equals(Parser<TIn> other)
+        {
+            return Equals(other as Then<TIn, TOut>);
+        }
+
+        public bool Equals(Then<TIn, TOut> other)
+        {
+            return other != null &&
+                   Equals(_first, other._first) &&
+                   Equals(_second, other._second);
         }
     }
 }

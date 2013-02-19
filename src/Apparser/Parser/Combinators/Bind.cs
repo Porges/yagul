@@ -4,7 +4,7 @@ using Outcomes;
 
 namespace Apparser.Parser.Combinators
 {
-    internal sealed class Bind<TIn, TMid, TOut> : Parser<TIn, TOut>
+    internal sealed class Bind<TIn, TMid, TOut> : Parser<TIn, TOut>, IEquatable<Bind<TIn, TMid, TOut>>
     {
         private readonly Func<TMid, Parser<TIn, TOut>> _projection;
         private readonly Parser<TIn, TMid> _parser;
@@ -20,6 +20,18 @@ namespace Apparser.Parser.Combinators
             return _parser
                 .RunWithResult(input)
                 .SelectManySuccess(x => _projection(x).RunWithResult(input));
+        }
+
+        public override bool Equals(Parser<TIn> other)
+        {
+            return Equals(other as Bind<TIn, TMid, TOut>);
+        }
+
+        public bool Equals(Bind<TIn, TMid, TOut> other)
+        {
+            return other != null &&
+                   Equals(_parser, other._parser) &&
+                   Equals(_projection, other._projection);
         }
     }
 }
