@@ -188,18 +188,19 @@ namespace Apparser.Parser
 
         public static Parser<TIn> Many<TIn>(this Parser<TIn> parser, int min = 0, int max = int.MaxValue)
         {
-            return new Many<TIn>(parser, min, max);
+            return Combinators.Many<TIn>.Create(parser, min, max);
         }
-
-        }
-
+        
         public static Parser<TIn, IList<TOut>> SepBy<TIn, TOut>(this Parser<TIn, TOut> parser, Parser<TIn> separator, int min = 0, int max = int.MaxValue)
         {
             return new SepBy<TIn, TOut>(parser, separator, min, max);
         }
-        public static Parser<TIn> SepBy<TIn>(this Parser<TIn> parser, Parser<TIn> separator, int min = 0, int max = int.MaxValue)
+
+        public static Parser<TIn> SepBy<TIn>(this Parser<TIn> parser, Parser<TIn> separator, int min = 0,int max = int.MaxValue)
         {
             return new SepBy<TIn>(parser, separator, min, max);
+        }
+
         public static Parser<TIn, TOut> ApplyTo<TIn, TMid, TOut>(this Func<TMid, TOut> projection,
                                                                  Parser<TIn, TMid> parser)
         {

@@ -6,7 +6,7 @@ using Yagul.Types;
 
 namespace Apparser.Parser.Combinators
 {
-    internal sealed class TakeWhile<TIn> : Parser<TIn, IList<TIn>>
+    internal sealed class TakeWhile<TIn> : Parser<TIn, IList<TIn>>, IEquatable<TakeWhile<TIn>>
     {
         private readonly Func<TIn, bool> _predicate;
         private readonly int _min;
@@ -46,6 +46,11 @@ namespace Apparser.Parser.Combinators
             return list;
         }
 
+        public override bool Equals(Parser<TIn> other)
+        {
+            return Equals(other as TakeWhile<TIn>);
+        }
+
         public override string Name
         {
             get { return "takeWhile"; }
@@ -55,17 +60,25 @@ namespace Apparser.Parser.Combinators
         {
             get { return _min == 0; }
         }
+
+        public bool Equals(TakeWhile<TIn> other)
+        {
+            return other != null &&
+                   _min == other._min &&
+                   _max == other._max &&
+                   _predicate.Equals(other._predicate);
+        }
     }
 
-    internal sealed class SkipWhile<TIn> : Parser<TIn>
+    internal sealed class SkipWhile<TIn> : Parser<TIn>, IEquatable<SkipWhile<TIn>>
     {
-        private readonly Func<TIn, bool> _parser;
+        private readonly Func<TIn, bool> _predicate;
         private readonly int _min;
         private readonly int _max;
 
-        public SkipWhile(Func<TIn, bool> parser, int min, int max)
+        public SkipWhile(Func<TIn, bool> predicate, int min, int max)
         {
-            _parser = parser;
+            _predicate = predicate;
             _min = min;
             _max = max;
         }
@@ -74,7 +87,7 @@ namespace Apparser.Parser.Combinators
         {
             var count = 0;
             var saved = input.Save();
-            var success = input.MoveNext() && _parser(input.Current);
+            var success = input.MoveNext() && _predicate(input.Current);
 
             while (success)
             {
@@ -82,7 +95,7 @@ namespace Apparser.Parser.Combinators
                     return default(Unit);
 
                 saved = input.Save();
-                success = input.MoveNext() && _parser(input.Current);
+                success = input.MoveNext() && _predicate(input.Current);
             }
 
             if (count < _min)
@@ -91,6 +104,11 @@ namespace Apparser.Parser.Combinators
             // the last one failed so restore the position
             input.Restore(saved);
             return default(Unit);
+        }
+
+        public override bool Equals(Parser<TIn> other)
+        {
+            return Equals(other as SkipWhile<TIn>);
         }
 
         public override string Name
@@ -102,6 +120,14 @@ namespace Apparser.Parser.Combinators
         public override bool CanMatchWithoutConsumingInput
         {
             get { return  _min == 0; }
+        }
+
+        public bool Equals(SkipWhile<TIn> other)
+        {
+            return other != null &&
+                   _min == other._min &&
+                   _max == other._max &&
+                   _predicate.Equals(other._predicate);
         }
     }
 }

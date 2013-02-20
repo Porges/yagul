@@ -169,33 +169,12 @@ namespace Apparser.Parser.Combinators
             input.Restore(saved);
             return default(Unit);
         }
-        
+
         public override string Name
         {
             get
             {
-                var inner = _parser.Name;
-
-        public override bool Equals(Parser<TIn> other)
-        {
-            return Equals(other as Many<TIn>);
-        }
-
-        public bool Equals(Many<TIn> other)
-        {
-            return other != null &&
-                   Equals(_parser, other._parser) &&
-                   _min == other._min &&
-                   _max == other._max;
-        }
-
-        public static Parser<TIn> Create(Parser<TIn> parser, int min, int max)
-        {
-            if (min == 1 && max == 1)
-                return parser;
-
-            return new Many<TIn>(parser, min, max);
-        }
+                var inner = _parser.Name; 
                 if (_min == 0)
                 {
                     if (_max == int.MaxValue)
@@ -223,7 +202,27 @@ namespace Apparser.Parser.Combinators
             }
         }
 
+        public override bool Equals(Parser<TIn> other)
+        {
+            return Equals(other as Many<TIn>);
+        }
 
+        public bool Equals(Many<TIn> other)
+        {
+            return other != null &&
+                   Equals(_parser, other._parser) &&
+                   _min == other._min &&
+                   _max == other._max;
+        }
+
+        public static Parser<TIn> Create(Parser<TIn> parser, int min, int max)
+        {
+            if (min == 1 && max == 1)
+                return parser;
+
+            return new Many<TIn>(parser, min, max);
+        }
+        
         public override bool CanMatchWithoutConsumingInput
         {
             get { return _parser.CanMatchWithoutConsumingInput || _min == 0; }

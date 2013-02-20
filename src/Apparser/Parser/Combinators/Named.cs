@@ -20,6 +20,11 @@ namespace Apparser.Parser.Combinators
             return _parser.Run(input);
         }
 
+        public override bool Equals(Parser<TIn> other)
+        {
+            return _parser.Equals(other);
+        }
+
         public override string Name
         {
             get { return _name; }

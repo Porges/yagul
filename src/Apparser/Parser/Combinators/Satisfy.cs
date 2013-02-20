@@ -30,7 +30,7 @@ namespace Apparser.Parser.Combinators
             if (min == 1 && max == 1)
                 return this.Select(x => (IList<T>)new[]{x});
 
-            return While<T>.Create(_predicate, min, max);
+            return new TakeWhile<T>(_predicate, min, max);
         }
 
         public override bool Equals(Parser<T> other)

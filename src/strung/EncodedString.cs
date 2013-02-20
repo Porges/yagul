@@ -83,7 +83,7 @@ namespace Strung
         }
 
         public Count<byte> CountBytes { get { return _bytes.Count; } }
-        public Count<UChar> CountChars { get { return new T().GetCharCount(_bytes); } } 
+        public Count<UChar> CountChars { get { return new T().GetCharCount(_bytes.ToArray()); /* TODO */ } } 
 
         /// <summary>
         /// Returns the byte at the specified index.

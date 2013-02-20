@@ -11,6 +11,11 @@ namespace Apparser.Parser.Combinators
             return Parser.Run(input);
         }
 
+        public override bool Equals(Parser<TIn> other)
+        {
+            return false;
+        }
+
         public Parser<TIn> Parser { get; set; }
 
         public override string Name
@@ -32,6 +37,11 @@ namespace Apparser.Parser.Combinators
         }
 
         public Parser<TIn, TOut> Parser { get; set; }
+
+        public override bool Equals(Parser<TIn> other)
+        {
+            return false;
+        }
 
         public override string Name
         {

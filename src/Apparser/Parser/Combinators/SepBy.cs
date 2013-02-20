@@ -1,11 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Apparser.Input;
 using Outcomes;
 using Yagul.Types;
 
 namespace Apparser.Parser.Combinators
 {
-    internal sealed class SepBy<TIn, TOut> : Parser<TIn, IList<TOut>>
+    internal sealed class SepBy<TIn, TOut> : Parser<TIn, IList<TOut>>, IEquatable<SepBy<TIn,TOut>>
     {
         private readonly Parser<TIn, TOut> _parser;
         private readonly Parser<TIn> _separator;
@@ -64,6 +65,21 @@ namespace Apparser.Parser.Combinators
         }
 
 
+        public override bool Equals(Parser<TIn> other)
+        {
+            return Equals(other as SepBy<TIn,TOut>);
+        }
+
+
+        public bool Equals(SepBy<TIn, TOut> other)
+        {
+            return other != null &&
+                   _min == other._min &&
+                   _max == other._max &&
+                   _parser.Equals(other._parser) &&
+                   _separator.Equals(other._separator);
+        }
+
         public override string Name
         {
             get
@@ -102,9 +118,10 @@ namespace Apparser.Parser.Combinators
         {
             get { return _min == 0 || (_separator.CanMatchWithoutConsumingInput && _parser.CanMatchWithoutConsumingInput); }
         }
+
     }
 
-    internal sealed class SepBy<TIn> : Parser<TIn>
+    internal sealed class SepBy<TIn> : Parser<TIn>, IEquatable<SepBy<TIn>>
     {
         private readonly Parser<TIn> _parser;
         private readonly Parser<TIn> _separator;
@@ -155,6 +172,20 @@ namespace Apparser.Parser.Combinators
             // the last one failed so restore the position
             input.Restore(saved);
             return success;
+        }
+
+        public override bool Equals(Parser<TIn> other)
+        {
+            return Equals(other as SepBy<TIn>);
+        }
+
+        public bool Equals(SepBy<TIn> other)
+        {
+            return other != null &&
+                   _min == other._min &&
+                   _max == other._max &&
+                   _parser.Equals(other._parser) &&
+                   _separator.Equals(other._separator);
         }
 
         public override string Name
