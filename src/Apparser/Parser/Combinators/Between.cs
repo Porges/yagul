@@ -53,5 +53,14 @@ namespace Apparser.Parser.Combinators
                    Equals(_end, other._end) &&
                    Equals(_repeat, other._repeat);
         }
+        public override string Name
+        {
+            get { return "until"; }
+        }
+
+        public override bool CanMatchWithoutConsumingInput
+        {
+            get { return _end.CanMatchWithoutConsumingInput; }
+        }
     }
 }

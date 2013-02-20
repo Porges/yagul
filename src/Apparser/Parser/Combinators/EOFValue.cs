@@ -33,5 +33,14 @@ namespace Apparser.Parser.Combinators
         {
             return other != null;
         }
+        public override string Name
+        {
+            get { return "end of file"; }
+        }
+
+        public override bool CanMatchWithoutConsumingInput
+        {
+            get { return true; }
+        }
     }
 }

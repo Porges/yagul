@@ -43,5 +43,15 @@ namespace Apparser.Parser.Combinators
             return other != null &&
                    Equals(_predicate, other._predicate);
         }
+
+        public override string Name
+        {
+            get { return "satisfying predicate"; }
+        }
+
+        public override bool CanMatchWithoutConsumingInput
+        {
+            get { return false; }
+        }
     }
 }

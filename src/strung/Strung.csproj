@@ -58,6 +58,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Canasta\Canasta.csproj">
+      <Project>{CB92AC0C-B56E-4C8B-BEF5-00295C56DC33}</Project>
+      <Name>Canasta</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Yagul\Yagul.csproj">
       <Project>{cd504ced-8111-4c56-88f4-cb4b7c3948ec}</Project>
       <Name>Yagul</Name>

@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Reflection;
 using JetBrains.Annotations;
 
 using PureAttribute = System.Diagnostics.Contracts.PureAttribute;
@@ -65,8 +68,15 @@ namespace Yagul.Extensions
             return result;
         }
 
+        // this is a giant hack
+        private static readonly FieldInfo _listArray = typeof(List<byte>).GetField("_items", BindingFlags.NonPublic | BindingFlags.Instance);
+        private static byte[] GetListBackingArray(List<byte> list)
+        {
+            return (byte[])_listArray.GetValue(list);
+        }
+
         [PublicAPI]
-        public static bool EqualBytes(this byte[] left, byte[] right)
+        public static bool EqualBytes(this List<byte> left, List<byte> right)
         {
             if (left == right)
                 return true;
@@ -74,17 +84,28 @@ namespace Yagul.Extensions
             if (left == null)
                 return false;
 
-            if (left.Length != right.Length)
+            if (left.Count != right.Count)
                 return false;
+
+            return EqualBytesInner(left, right, left.Count);
+        }
+
+        private static bool EqualBytesInner(this List<byte> left, List<byte> right, int count)
+        {
+            Debug.Assert(left != null);
+            Debug.Assert(right != null);
+            Debug.Assert(count >= 0);
+            Debug.Assert(count <= left.Count);
+            Debug.Assert(count <= right.Count);
 
             unsafe
             {
-                fixed (byte* bytes = left)
-                fixed (byte* otherBytes = right)
+                fixed (byte* bytes = GetListBackingArray(left))
+                fixed (byte* otherBytes = GetListBackingArray(right))
                 {
-                    var longLength = left.Length / sizeof(long);
-                    var longs = (long*)bytes;
-                    var otherLongs = (long*)otherBytes;
+                    var longLength = count / sizeof(IntPtr);
+                    var longs = (IntPtr*)bytes;
+                    var otherLongs = (IntPtr*)otherBytes;
 
                     for (int i = 0; i < longLength; ++i)
                     {
@@ -93,7 +114,7 @@ namespace Yagul.Extensions
                     }
 
                     // do leftovers at the end of the string
-                    for (int i = longLength * sizeof(long); i < left.Length; ++i)
+                    for (int i = longLength * sizeof(IntPtr); i < count; ++i)
                     {
                         if (bytes[i] != otherBytes[i])
                             return false;
@@ -102,6 +123,21 @@ namespace Yagul.Extensions
             }
 
             return true;
+        }
+
+        [PublicAPI]
+        public static bool EqualBytes(this List<byte> left, int leftCount, List<byte> right, int rightCount)
+        {
+            if (left == right)
+                return true;
+
+            if (left == null)
+                return false;
+
+            if (leftCount != rightCount)
+                return false;
+
+            return EqualBytesInner(left, right, leftCount);
         }
     }
 }

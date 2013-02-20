@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Text;
+using Canasta;
 using JetBrains.Annotations;
 using Yagul;
-using Yagul.Extensions;
 
 namespace Strung
 {
@@ -13,7 +14,8 @@ namespace Strung
     [PublicAPI]
     public class EncodedString<T> : IEquatable<EncodedString<T>>, IReadOnlyList<byte>, IReadOnlyList<UChar> where T : Encoding, new()
     {
-        [NotNull] internal byte[] _bytes;
+        [NotNull]
+        internal ExtendablePersistentList<byte> _bytes;
 
         public EncodedString() : this(Arrays<byte>.Empty)
         { }
@@ -24,10 +26,13 @@ namespace Strung
                 throw new ArgumentNullException("other");
         }
         
-        internal EncodedString(byte[] bytes)
+        internal EncodedString(ExtendablePersistentList<byte> bytes)
         {
             _bytes = bytes;
         }
+
+        internal EncodedString(ICollection<byte> bytes) : this(new ExtendablePersistentList<byte>(bytes.Count) + bytes)
+        { }
 
         /// <summary>
         /// Compares the encoded strings on a byte-by-byte basis.
@@ -38,7 +43,7 @@ namespace Strung
         {
             if (other == null)
                 return false;
-
+            
             var areEqual = _bytes.EqualBytes(other._bytes);
 
             if (areEqual) // we know they're the same so merge them! strings are readonly, after all
@@ -49,7 +54,7 @@ namespace Strung
 
         public static EncodedString<T> Concat(EncodedString<T> left, EncodedString<T> right)
         {
-            return new EncodedString<T>(left._bytes.Concat(right._bytes, shortCutAllowed: true));
+            return new EncodedString<T>(left._bytes + right._bytes);
         }
 
         public static EncodedString<T> operator +(EncodedString<T> left, EncodedString<T> right)
@@ -77,7 +82,7 @@ namespace Strung
             return new EncodedString<T>(input);
         }
 
-        public Count<byte> CountBytes { get { return _bytes.Length; } }
+        public Count<byte> CountBytes { get { return _bytes.Count; } }
         public Count<UChar> CountChars { get { return new T().GetCharCount(_bytes); } } 
 
         /// <summary>
@@ -136,7 +141,7 @@ namespace Strung
 
         public override string ToString()
         {
-            return new T().GetString(_bytes);
+            return new T().GetString(_bytes.ToArray());
         }
 
         IEnumerator IEnumerable.GetEnumerator()
@@ -153,7 +158,7 @@ namespace Strung
             if (typeof(TNewEncoding) == typeof(UTF8Encoding) && typeof(T) == typeof(ASCIIEncoding))
                 return new EncodedString<TNewEncoding>(_bytes);
 
-            return new EncodedString<TNewEncoding>(new TNewEncoding().GetBytes(new T().GetString(_bytes)));
+            return new EncodedString<TNewEncoding>(new TNewEncoding().GetBytes(new T().GetString(_bytes.ToArray())));
         }
     }
 }

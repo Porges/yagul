@@ -14,6 +14,9 @@ namespace Apparser.Parser.Combinators
 
         private Many(Parser<TIn, TOut> parser, int min, int max)
         {
+            if (parser.CanMatchWithoutConsumingInput && max > 1)
+                throw new ArgumentException("You cannot use nonconsuming parsers with Many");
+
             _parser = parser;
             _min = min;
             _max = max;
@@ -67,7 +70,7 @@ namespace Apparser.Parser.Combinators
             }
 
             if (count < _min)
-                return string.Format("Expected at least '{0}' copies, only found '{1}'.", _min, count);
+                return string.Format("Expected at least {0} copies of ({2}), only found {1}.", _min, count, _parser.Name);
 
             // the last one failed so restore the position
             input.Restore(saved);
@@ -89,6 +92,43 @@ namespace Apparser.Parser.Combinators
 
             return new Many<TIn, TOut>(parser, min, max);
         }
+        public override string Name
+        {
+            get
+            {
+                var inner = _parser.Name;
+
+                if (_min == 0)
+                {
+                    if (_max == int.MaxValue)
+                    {
+                        return string.Format("{0}, any number of times", inner);
+                    }
+                    else
+                    {
+                        return string.Format("{0}, up to {1} times", inner, _max);
+                    }
+                }
+                else
+                {
+                    if (_max == int.MaxValue)
+                    {
+
+                        return string.Format("{0}, at least {1} times", inner, _min);
+                    }
+                    else
+                    {
+                        return string.Format("{0}, from {1} to {2} times", inner, _min, _max);
+                        
+                    }
+                }
+            }
+        }
+
+        public override bool CanMatchWithoutConsumingInput
+        {
+            get { return _parser.CanMatchWithoutConsumingInput || _min == 0; }
+        }
     }
 
     internal sealed class Many<TIn> : Parser<TIn>, IEquatable<Many<TIn>>
@@ -99,6 +139,9 @@ namespace Apparser.Parser.Combinators
 
         private Many(Parser<TIn> parser, int min, int max)
         {
+            if (parser.CanMatchWithoutConsumingInput && max > 1)
+                throw new ArgumentException("You cannot use nonconsuming parsers with Many");
+
             _parser = parser;
             _min = min;
             _max = max;
@@ -120,12 +163,18 @@ namespace Apparser.Parser.Combinators
             }
 
             if (count < _min)
-                return string.Format("Expected at least '{0}' copies, only found '{1}'.", _min, count);
+                return string.Format("Expected at least {0} copies of ({2}), only found {1}.", _min, count, _parser.Name);
 
             // the last one failed so restore the position
             input.Restore(saved);
             return default(Unit);
         }
+        
+        public override string Name
+        {
+            get
+            {
+                var inner = _parser.Name;
 
         public override bool Equals(Parser<TIn> other)
         {
@@ -146,6 +195,38 @@ namespace Apparser.Parser.Combinators
                 return parser;
 
             return new Many<TIn>(parser, min, max);
+        }
+                if (_min == 0)
+                {
+                    if (_max == int.MaxValue)
+                    {
+                        return string.Format("{0}, any number of times", inner);
+                    }
+                    else
+                    {
+                        return string.Format("{0}, up to {1} times", inner, _max);
+                    }
+                }
+                else
+                {
+                    if (_max == int.MaxValue)
+                    {
+
+                        return string.Format("{0}, at least {1} times", inner, _min);
+                    }
+                    else
+                    {
+                        return string.Format("{0}, from {1} to {2} times", inner, _min, _max);
+
+                    }
+                }
+            }
+        }
+
+
+        public override bool CanMatchWithoutConsumingInput
+        {
+            get { return _parser.CanMatchWithoutConsumingInput || _min == 0; }
         }
     }
 }

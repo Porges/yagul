@@ -192,4 +192,4 @@ namespace Outcomes
             return projection(Value);
         }
     }
-}//.mjngr4ewq
+}

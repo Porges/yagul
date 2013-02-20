@@ -31,5 +31,15 @@ namespace Apparser.Parser.Combinators
                    Equals(_parser, other._parser) &&
                    Equals(_projection, other._projection);
         }
+
+        public override string Name
+        {
+            get { return _parser.Name; }
+        }
+
+        public override bool CanMatchWithoutConsumingInput
+        {
+            get { return _parser.CanMatchWithoutConsumingInput; }
+        }
     }
 }

@@ -59,6 +59,15 @@ namespace Apparser.Parser.Combinators
 
             return new EitherOf<TIn, TOut>(left, right);
         }
+        public override string Name
+        {
+            get { return string.Format("either: ({0}), or: ({1})", _first.Name, _second.Name); }
+        }
+
+        public override bool CanMatchWithoutConsumingInput
+        {
+            get { return _first.CanMatchWithoutConsumingInput || _second.CanMatchWithoutConsumingInput; }
+        }
     }
 
     internal sealed class EitherOf<TIn> : Parser<TIn>, IEquatable<EitherOf<TIn>>
@@ -75,6 +84,7 @@ namespace Apparser.Parser.Combinators
         public override Result<string, Unit> Run<TSave>(IParserInput<TIn, TSave> input)
         {
             var saved = input.Save();
+            
             return _first
                 .Run(input)
                 .SelectManyFailure(_ =>
@@ -114,6 +124,16 @@ namespace Apparser.Parser.Combinators
             return other != null &&
                    ((Equals(_first, other._first) && Equals(_second, other._second)) ||
                     (Equals(_second, other._first) && Equals(_first, other._second)));
+        }
+        public override string Name
+        {
+            get { return string.Format("either: ({0}), or: ({1})", _first.Name, _second.Name); }
+        }
+
+
+        public override bool CanMatchWithoutConsumingInput
+        {
+            get { return _first.CanMatchWithoutConsumingInput || _second.CanMatchWithoutConsumingInput; }
         }
     }
 }

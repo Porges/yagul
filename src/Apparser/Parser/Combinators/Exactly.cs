@@ -34,5 +34,19 @@ namespace Apparser.Parser.Combinators
             return other != null
                    && Equals(_item, other._item);
         }
+        public override string Name
+        {
+            get { return "'" + Sanitise(_item.ToString()) + "'"; }
+        }
+
+        public override bool CanMatchWithoutConsumingInput
+        {
+            get { return false; }
+        }
+
+        private string Sanitise(string input)
+        {
+            return input.Replace("\r", "CR").Replace("\n", "LF");
+        }
     }
 }

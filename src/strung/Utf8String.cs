@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Collections.Generic;
+using System.Text;
 
 namespace Strung
 {
@@ -7,7 +8,7 @@ namespace Strung
         public UTF8String(string value) : base(value)
         { }
 
-        private UTF8String(byte[] value) : base(value)
+        private UTF8String(ICollection<byte> value) : base(value)
         {
         }
 

@@ -27,6 +27,16 @@ namespace Apparser.Parser.Combinators
             get { return _instance; }
         }
 
+        public override string Name
+        {
+            get { return "success"; }
+        }
+
+        public override bool CanMatchWithoutConsumingInput
+        {
+            get { return true; }
+        }
+
         public bool Equals(Success<TIn> other)
         {
             return other != null;
@@ -46,7 +56,7 @@ namespace Apparser.Parser.Combinators
         {
             return _value;
         }
-        
+
         public override bool Equals(Parser<TIn> other)
         {
             return Equals(other as Success<TIn, TValue>);
@@ -56,6 +66,15 @@ namespace Apparser.Parser.Combinators
         {
             return other != null &&
                    Equals(_value, other._value);
+        }
+        public override string Name
+        {
+            get { return "success"; }
+        }
+
+        public override bool CanMatchWithoutConsumingInput
+        {
+            get { return true; }
         }
     }
 }

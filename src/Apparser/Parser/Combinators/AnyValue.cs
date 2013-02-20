@@ -40,6 +40,16 @@ namespace Apparser.Parser.Combinators
         public bool Equals(AnyValue<TIn> other)
         {
             return other != null;
+		}
+		
+        public override string Name
+        {
+            get { return "anything"; }
+        }
+
+        public override bool CanMatchWithoutConsumingInput
+        {
+            get { return false; }
         }
     }
 }

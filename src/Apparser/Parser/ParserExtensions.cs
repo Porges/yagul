@@ -32,6 +32,10 @@ namespace Apparser.Parser
         {
             return Many<TIn>.Create(this, min, max);
         }
+
+        public abstract string Name { get; }
+
+        public abstract bool CanMatchWithoutConsumingInput { get; }
     }
     
     public abstract class Parser<TIn, TOut> : Parser<TIn>
@@ -182,6 +186,20 @@ namespace Apparser.Parser
             return EOFValue<TIn>.Instance;
         }
 
+        public static Parser<TIn> Many<TIn>(this Parser<TIn> parser, int min = 0, int max = int.MaxValue)
+        {
+            return new Many<TIn>(parser, min, max);
+        }
+
+        }
+
+        public static Parser<TIn, IList<TOut>> SepBy<TIn, TOut>(this Parser<TIn, TOut> parser, Parser<TIn> separator, int min = 0, int max = int.MaxValue)
+        {
+            return new SepBy<TIn, TOut>(parser, separator, min, max);
+        }
+        public static Parser<TIn> SepBy<TIn>(this Parser<TIn> parser, Parser<TIn> separator, int min = 0, int max = int.MaxValue)
+        {
+            return new SepBy<TIn>(parser, separator, min, max);
         public static Parser<TIn, TOut> ApplyTo<TIn, TMid, TOut>(this Func<TMid, TOut> projection,
                                                                  Parser<TIn, TMid> parser)
         {
@@ -191,6 +209,36 @@ namespace Apparser.Parser
         public static Parser<TIn, TFOut> ThenTo<TIn, TFIn, TFOut>(this Parser<TIn, Func<TFIn, TFOut>> previous, Parser<TIn, TFIn> next)
         {
             return previous.SelectMany(f => f.ApplyTo(next));
+        }
+
+        public static Deferred<TIn,TOut> Deferred<TIn, TOut>()
+        {
+            return new Deferred<TIn, TOut>();
+        }
+
+        public static Deferred<TIn> Deferred<TIn>()
+        {
+            return new Deferred<TIn>();
+        }
+
+        public static Parser<TIn> Optional<TIn>(this Parser<TIn> parser)
+        {
+            return parser.Many(0, 1);
+        }
+
+        public static Parser<TIn> Name<TIn>(this Parser<TIn> parser, string name)
+        {
+            return new Named<TIn>(parser, name);
+        }
+
+        public static Parser<TIn> SkipWhile<TIn>(Func<TIn, bool> predicate, int min = 0, int max = int.MaxValue)
+        {
+            return new SkipWhile<TIn>(predicate, min, max);
+        }
+
+        public static Parser<TIn, IList<TIn>> TakeWhile<TIn>(Func<TIn, bool> predicate, int min = 0, int max = int.MaxValue)
+        {
+            return new TakeWhile<TIn>(predicate, min, max);
         }
     }
 }

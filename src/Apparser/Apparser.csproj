@@ -45,6 +45,9 @@
     <Compile Include="Parser\Combinators\App.cs" />
     <Compile Include="Parser\Combinators\Between.cs" />
     <Compile Include="Parser\Combinators\Bind.cs" />
+    <Compile Include="Parser\Combinators\Deferred.cs" />
+    <Compile Include="Parser\Combinators\Named.cs" />
+    <Compile Include="Parser\Combinators\SepBy.cs" />
     <Compile Include="Parser\Combinators\Success.cs" />
     <Compile Include="Input\IParserInput.cs" />
     <Compile Include="Parser\Combinators\EOFValue.cs" />
@@ -52,7 +55,7 @@
     <Compile Include="Parser\Combinators\EitherOf.cs" />
     <Compile Include="Parser\Combinators\Exactly.cs" />
     <Compile Include="Parser\Combinators\Fail.cs" />
-    <Compile Include="Parser\Combinators\While.cs" />
+    <Compile Include="Parser\Combinators\SkipWhile.cs" />
     <Compile Include="Parser\ParserExtensions.cs" />
     <Compile Include="Parser\Combinators\Then.cs" />
     <Compile Include="Parser\Combinators\Satisfy.cs" />

@@ -34,6 +34,15 @@ namespace Apparser.Parser.Combinators
                    Equals(_first, other._first) &&
                    Equals(_second, other._second);
         }
+        public override string Name
+        {
+            get { return string.Format("{0}, then {1}", _first.Name, _second.Name); }
+        }
+
+        public override bool CanMatchWithoutConsumingInput
+        {
+            get { return _first.CanMatchWithoutConsumingInput && _second.CanMatchWithoutConsumingInput; }
+        }
     }
 
     internal sealed class Then<TIn, TOut> : Parser<TIn, TOut>, IEquatable<Then<TIn, TOut>>
@@ -64,6 +73,16 @@ namespace Apparser.Parser.Combinators
             return other != null &&
                    Equals(_first, other._first) &&
                    Equals(_second, other._second);
+        }
+        
+        public override string Name
+        {
+            get { return string.Format("{0}, then {1}", _first.Name, _second.Name); }
+        }
+
+        public override bool CanMatchWithoutConsumingInput
+        {
+            get { return _first.CanMatchWithoutConsumingInput && _second.CanMatchWithoutConsumingInput; }
         }
     }
 }

@@ -22,6 +22,7 @@ namespace Apparser.Parser.Combinators
                 .SelectManySuccess(x => _projection(x).RunWithResult(input));
         }
 
+
         public override bool Equals(Parser<TIn> other)
         {
             return Equals(other as Bind<TIn, TMid, TOut>);
@@ -32,6 +33,15 @@ namespace Apparser.Parser.Combinators
             return other != null &&
                    Equals(_parser, other._parser) &&
                    Equals(_projection, other._projection);
+        }
+        public override string Name
+        {
+            get { return _parser.Name; }
+        }
+
+        public override bool CanMatchWithoutConsumingInput
+        {
+            get { return _parser.CanMatchWithoutConsumingInput; }
         }
     }
 }
