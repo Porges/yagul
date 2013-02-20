@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using Apparser.Input;
 using Apparser.Parser.Combinators;
 using Outcomes;
@@ -8,6 +7,11 @@ using Yagul.Types;
 
 namespace Apparser.Parser
 {
+    public abstract class Parser
+    {
+        public abstract Result<string, Unit> Run<TSave>(IParserInput input);
+    }
+
     public abstract class Parser<TIn> : IEquatable<Parser<TIn>>
     {
         public abstract Result<string, Unit> Run<TSave>(IParserInput<TIn, TSave> input) where TSave : IEquatable<TSave>;
@@ -95,7 +99,7 @@ namespace Apparser.Parser
 
     }
 
-    public static class Parser
+    public static class ParserExtensions
     {
         public static Parser<T, T> Any<T>()
         {
