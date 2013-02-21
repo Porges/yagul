@@ -21,6 +21,44 @@ namespace Apparser.Parser.Combinators
             _max = max;
         }
 
+        public override Result<string, Unit> Run<TSave>(IParserInput<TIn, TSave> input)
+        {
+            var count = 0;
+            var saved = input.Save();
+            var result = _parser.Run(input);
+
+            Unit success;
+            while (result.TryGetSuccess(out success))
+            {
+                if (++count == _max)
+                    return new Outcomes.Success<string, Unit>(success);
+
+                saved = input.Save();
+                if (_separator.Run(input).IsFailure)
+                {
+                    break;
+                }
+
+                result = _parser.Run(input);
+            }
+
+            if (count < _min)
+            {
+                string failureMessage;
+                if (result.TryGetFailure(out failureMessage))
+                {
+                    return new Failure<string, Unit>(failureMessage);
+                }
+
+                return new Failure<string, Unit>(string.Format("Expected at least {0} copies of ({2}) (separated by {3}) only found {1}.", _min,
+                                     count, _parser.Name, _separator.Name));
+            }
+
+            // the last one failed so restore the position
+            input.Restore(saved);
+            return new Outcomes.Success<string, Unit>(success);
+        }
+
         public override Result<string, IList<TOut>> RunWithResult<TSave>(IParserInput<TIn, TSave> input)
         {
             var count = 0;
@@ -34,7 +72,7 @@ namespace Apparser.Parser.Combinators
                 list.Add(success);
 
                 if (++count == _max)
-                    return list;
+                    return new Outcomes.Success<string, IList<TOut>>(list);
 
                 saved = input.Save();
                 if (_separator.Run(input).IsFailure)
@@ -50,18 +88,18 @@ namespace Apparser.Parser.Combinators
                 string failureMessage;
                 if (result.TryGetFailure(out failureMessage))
                 {
-                    return failureMessage;
+                    return new Failure<string, IList<TOut>>(failureMessage);
                 }
 
                 return
-                    string.Format(
+                    new Failure<string, IList<TOut>>(string.Format(
                         "Expected at least {0} copies of ({2}) (separated by {3}) only found {1}. Failed because: {2}",
-                        _min, count, _parser.Name, _separator.Name);
+                        _min, count, _parser.Name, _separator.Name));
             }
 
             // the last one failed so restore the position
             input.Restore(saved);
-            return list;
+            return new Outcomes.Success<string, IList<TOut>>(list);
         }
 
 
@@ -146,7 +184,7 @@ namespace Apparser.Parser.Combinators
             while (result.TryGetSuccess(out success))
             {
                 if (++count == _max)
-                    return success;
+                    return new Outcomes.Success<string, Unit>(success);
 
                 saved = input.Save();
                 if (_separator.Run(input).IsFailure)
@@ -162,16 +200,16 @@ namespace Apparser.Parser.Combinators
                 string failureMessage;
                 if (result.TryGetFailure(out failureMessage))
                 {
-                    return failureMessage;
+                    return new Failure<string, Unit>(failureMessage);
                 }
 
-                return string.Format("Expected at least {0} copies of ({2}) (separated by {3}) only found {1}.", _min,
-                                     count, _parser.Name, _separator.Name);
+                return new Failure<string, Unit>(string.Format("Expected at least {0} copies of ({2}) (separated by {3}) only found {1}.", _min,
+                                     count, _parser.Name, _separator.Name));
             }
 
             // the last one failed so restore the position
             input.Restore(saved);
-            return success;
+            return new Outcomes.Success<string, Unit>(success);
         }
 
         public override bool Equals(Parser<TIn> other)

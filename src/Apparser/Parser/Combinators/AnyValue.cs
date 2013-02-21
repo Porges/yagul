@@ -13,17 +13,17 @@ namespace Apparser.Parser.Combinators
         public override Result<string, TIn> RunWithResult<TSave>(IParserInput<TIn,TSave> input)
         {
             if (input.MoveNext())
-                return input.Current;
+                return new Outcomes.Success<string, TIn>(input.Current);
 
-            return "No value available";
+            return new Failure<string, TIn>("No value available");
         }
 
         public override Result<string, Unit> Run<TSave>(IParserInput<TIn, TSave> input)
         {
             if (input.MoveNext())
-                return default(Unit);
+                return new Outcomes.Success<string, Unit>(default(Unit));
 
-            return "No value available";
+            return new Failure<string, Unit>("No value available");
         }
 
         public override bool Equals(Parser<TIn> other)

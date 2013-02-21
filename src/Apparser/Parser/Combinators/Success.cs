@@ -14,7 +14,7 @@ namespace Apparser.Parser.Combinators
 
         public override Result<string, Unit> Run<TSave>(IParserInput<TIn, TSave> input)
         {
-            return default(Unit);
+            return new Outcomes.Success<string, Unit>(default(Unit));
         }
 
         public override bool Equals(Parser<TIn> other)
@@ -54,7 +54,12 @@ namespace Apparser.Parser.Combinators
 
         public override Result<string, TValue> RunWithResult<TSave>(IParserInput<TIn, TSave> input)
         {
-            return _value;
+            return new Outcomes.Success<string, TValue>(_value);
+        }
+
+        public override Result<string, Unit> Run<TSave>(IParserInput<TIn, TSave> input)
+        {
+            return new Outcomes.Success<string, Unit>(default(Unit));
         }
 
         public override bool Equals(Parser<TIn> other)

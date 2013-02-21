@@ -1,6 +1,7 @@
 using System;
 using Apparser.Input;
 using Outcomes;
+using Yagul.Types;
 
 namespace Apparser.Parser.Combinators
 {
@@ -16,12 +17,23 @@ namespace Apparser.Parser.Combinators
         public override Result<string, TIn> RunWithResult<TSave>(IParserInput<TIn,TSave> input)
         {
             if (!input.MoveNext())
-                return string.Format("Unexpected end of input.");
+                return new Failure<string, TIn>(string.Format("Unexpected end of input."));
 
             if (input.Current.Equals(_item))
-                return _item;
+                return new Outcomes.Success<string, TIn>(_item);
 
-            return string.Format("Expected '{0}', got '{1}'.", _item, input.Current);
+            return new Failure<string, TIn>(string.Format("Expected '{0}', got '{1}'.", _item, input.Current));
+        }
+
+        public override Result<string, Unit> Run<TSave>(IParserInput<TIn, TSave> input)
+        {
+            if (!input.MoveNext())
+                return new Failure<string, Unit>(string.Format("Unexpected end of input."));
+
+            if (input.Current.Equals(_item))
+                return new Outcomes.Success<string, Unit>(default(Unit));
+
+            return new Failure<string, Unit>(string.Format("Expected '{0}', got '{1}'.", _item, input.Current));
         }
 
         public override bool Equals(Parser<TIn> other)

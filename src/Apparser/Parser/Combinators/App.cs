@@ -1,6 +1,7 @@
 using System;
 using Apparser.Input;
 using Outcomes;
+using Yagul.Types;
 
 namespace Apparser.Parser.Combinators
 {
@@ -18,6 +19,11 @@ namespace Apparser.Parser.Combinators
         public override Result<string, TOut> RunWithResult<TSave>(IParserInput<TIn,TSave> input)
         {
             return _parser.RunWithResult(input).SelectSuccess(_projection);
+        }
+
+        public override Result<string, Unit> Run<TSave>(IParserInput<TIn, TSave> input)
+        {
+            return _parser.Run(input);
         }
 
         public override bool Equals(Parser<TIn> other)

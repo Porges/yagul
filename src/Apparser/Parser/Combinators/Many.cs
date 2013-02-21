@@ -31,18 +31,18 @@ namespace Apparser.Parser.Combinators
             while (result.IsSuccess)
             {
                 if (++count == _max)
-                    return default(Unit);
+                    return new Outcomes.Success<string, Unit>(default(Unit));
 
                 saved = input.Save();
                 result = _parser.Run(input);
             }
 
             if (count < _min)
-                return string.Format("Expected at least '{0}' copies, only found '{1}'.", _min, count);
+                return new Failure<string, Unit>("");//string.Format("Expected at least '{0}' copies, only found '{1}'.", _min, count));
 
             // the last one failed so restore the position
             input.Restore(saved);
-            return default(Unit);
+            return new Outcomes.Success<string, Unit>(default(Unit));
         }
 
         public override bool Equals(Parser<TIn> other)
@@ -63,18 +63,18 @@ namespace Apparser.Parser.Combinators
                 list.Add(success);
 
                 if (++count == _max)
-                    return list;
+                    return new Outcomes.Success<string, IList<TOut>>(list);
 
                 saved = input.Save();
                 result = _parser.RunWithResult(input);
             }
 
             if (count < _min)
-                return string.Format("Expected at least {0} copies of ({2}), only found {1}.", _min, count, _parser.Name);
+                return new Failure<string, IList<TOut>>("");//string.Format("Expected at least {0} copies of ({2}), only found {1}.", _min, count, _parser.Name));
 
             // the last one failed so restore the position
             input.Restore(saved);
-            return list;
+            return new Outcomes.Success<string, IList<TOut>>(list);
         }
 
         public bool Equals(Many<TIn, TOut> other)
@@ -156,18 +156,18 @@ namespace Apparser.Parser.Combinators
             while (result.IsSuccess)
             {
                 if (++count == _max)
-                    return default(Unit);
+                    return new Outcomes.Success<string, Unit>(default(Unit));
 
                 saved = input.Save();
                 result = _parser.Run(input);
             }
 
             if (count < _min)
-                return string.Format("Expected at least {0} copies of ({2}), only found {1}.", _min, count, _parser.Name);
+                return new Failure<string, Unit>("");//string.Format("Expected at least {0} copies of ({2}), only found {1}.", _min, count, _parser.Name));
 
             // the last one failed so restore the position
             input.Restore(saved);
-            return default(Unit);
+            return new Outcomes.Success<string, Unit>(default(Unit));
         }
 
         public override string Name

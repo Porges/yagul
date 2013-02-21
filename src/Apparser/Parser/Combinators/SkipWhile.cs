@@ -19,6 +19,29 @@ namespace Apparser.Parser.Combinators
             _max = max;
         }
 
+        public override Result<string, Unit> Run<TSave>(IParserInput<TIn, TSave> input)
+        {
+            var count = 0;
+            var saved = input.Save();
+            var success = input.MoveNext() && _predicate(input.Current);
+
+            while (success)
+            {
+                if (++count == _max)
+                    return new Outcomes.Success<string, Unit>(default(Unit));
+
+                saved = input.Save();
+                success = input.MoveNext() && _predicate(input.Current);
+            }
+
+            if (count < _min)
+                return new Failure<string, Unit>(string.Format("Not Enough Times"));
+
+            // the last one failed so restore the position
+            input.Restore(saved);
+            return new Outcomes.Success<string, Unit>(default(Unit));
+        }
+
         public override Result<string, IList<TIn>> RunWithResult<TSave>(IParserInput<TIn, TSave> input)
         {
             var count = 0;
@@ -32,18 +55,18 @@ namespace Apparser.Parser.Combinators
                 list.Add(input.Current);
 
                 if (++count == _max)
-                    return list;
+                    return new Outcomes.Success<string, IList<TIn>>(list);
 
                 saved = input.Save();
                 success = input.MoveNext() && _predicate(input.Current);
             }
 
             if (count < _min)
-                return string.Format("Not Enough Times");
+                return new Failure<string, IList<TIn>>(string.Format("Not Enough Times"));
 
             // the last one failed so restore the position
             input.Restore(saved);
-            return list;
+            return new Outcomes.Success<string, IList<TIn>>(list);
         }
 
         public override bool Equals(Parser<TIn> other)
@@ -92,18 +115,18 @@ namespace Apparser.Parser.Combinators
             while (success)
             {
                 if (++count == _max)
-                    return default(Unit);
+                    return new Outcomes.Success<string, Unit>(default(Unit));
 
                 saved = input.Save();
                 success = input.MoveNext() && _predicate(input.Current);
             }
 
             if (count < _min)
-                return string.Format("Not Enough Times");
+                return new Failure<string, Unit>(string.Format("Not Enough Times"));
 
             // the last one failed so restore the position
             input.Restore(saved);
-            return default(Unit);
+            return new Outcomes.Success<string, Unit>(default(Unit));
         }
 
         public override bool Equals(Parser<TIn> other)
@@ -115,8 +138,7 @@ namespace Apparser.Parser.Combinators
         {
             get { return "takeWhile"; }
         }
-
-
+        
         public override bool CanMatchWithoutConsumingInput
         {
             get { return  _min == 0; }

@@ -50,14 +50,14 @@
     <Compile Include="Parser\Combinators\SepBy.cs" />
     <Compile Include="Parser\Combinators\Success.cs" />
     <Compile Include="Input\IParserInput.cs" />
-    <Compile Include="Parser\Combinators\EOFValue.cs" />
+    <Compile Include="Parser\Combinators\EndOfInput.cs" />
     <Compile Include="Parser\Combinators\Many.cs" />
-    <Compile Include="Parser\Combinators\EitherOf.cs" />
+    <Compile Include="Parser\Combinators\AnyOf.cs" />
     <Compile Include="Parser\Combinators\Exactly.cs" />
     <Compile Include="Parser\Combinators\Fail.cs" />
     <Compile Include="Parser\Combinators\SkipWhile.cs" />
     <Compile Include="Parser\ParserExtensions.cs" />
-    <Compile Include="Parser\Combinators\Then.cs" />
+    <Compile Include="Parser\Combinators\ThenParser.cs" />
     <Compile Include="Parser\Combinators\Satisfy.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

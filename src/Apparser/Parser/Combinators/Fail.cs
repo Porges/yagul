@@ -21,7 +21,7 @@ namespace Apparser.Parser.Combinators
 
         public override Result<string, Unit> Run<TSave>(IParserInput<T,TSave> input)
         {
-            return _message;
+            return new Failure<string, Unit>(_message);
         }
 
         public override bool Equals(Parser<T> other)

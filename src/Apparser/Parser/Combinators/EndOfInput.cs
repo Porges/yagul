@@ -5,31 +5,31 @@ using Yagul.Types;
 
 namespace Apparser.Parser.Combinators
 {
-    internal sealed class EOFValue<TIn> : Parser<TIn>, IEquatable<EOFValue<TIn>>
+    internal sealed class EndOfInput<TIn> : Parser<TIn>, IEquatable<EndOfInput<TIn>>
     {
-        private static readonly EOFValue<TIn> _instance = new EOFValue<TIn>();
+        private static readonly EndOfInput<TIn> _instance = new EndOfInput<TIn>();
 
-        private EOFValue() { }
+        private EndOfInput() { }
 
         public override Result<string, Unit> Run<TSave>(IParserInput<TIn,TSave> input)
         {
             if (input.MoveNext())
-                return "Expected end of input.";
+                return new Failure<string, Unit>("Expected end of input.");
 
-            return default(Unit);
+            return new Outcomes.Success<string, Unit>(default(Unit));
         }
 
         public override bool Equals(Parser<TIn> other)
         {
-            return Equals(other as EOFValue<TIn>);
+            return Equals(other as EndOfInput<TIn>);
         }
 
-        public static EOFValue<TIn> Instance
+        public static EndOfInput<TIn> Instance
         {
             get { return _instance; }
         }
 
-        public bool Equals(EOFValue<TIn> other)
+        public bool Equals(EndOfInput<TIn> other)
         {
             return other != null;
         }

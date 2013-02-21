@@ -38,6 +38,11 @@ namespace Apparser.Parser.Combinators
 
         public Parser<TIn, TOut> Parser { get; set; }
 
+        public override Result<string, Unit> Run<TSave>(IParserInput<TIn, TSave> input)
+        {
+            return Parser.Run(input);
+        }
+
         public override bool Equals(Parser<TIn> other)
         {
             return false;

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Apparser.Input;
 using Outcomes;
+using Yagul.Types;
 
 namespace Apparser.Parser.Combinators
 {
@@ -33,13 +34,33 @@ namespace Apparser.Parser.Combinators
                 if (!repeated.TryGetSuccess(out success))
                 {
                     repeated.TryGetFailure(out message);
-                    return message;
+                    return new Failure<string, IList<TOut>>(message);
                 }
 
                 list.Add(success);
             }
 
-            return list;
+            return new Outcomes.Success<string, IList<TOut>>(list);
+        }
+
+        public override Result<string, Unit> Run<TSave>(IParserInput<TIn, TSave> input)
+        {
+            var result = _end.Run(input);
+
+            string message;
+            for (var save = input.Save(); result.TryGetFailure(out message); save = input.Save())
+            {
+                input.Restore(save);
+
+                var repeated = _repeat.Run(input);
+
+                if (repeated.TryGetFailure(out message))
+                {
+                    return new Failure<string, Unit>(message);
+                }
+            }
+
+            return new Outcomes.Success<string, Unit>(default(Unit));
         }
 
         public override bool Equals(Parser<TIn> other)

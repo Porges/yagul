@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using Apparser.Input;
 using Apparser.Parser.Combinators;
 using Outcomes;
@@ -7,10 +8,6 @@ using Yagul.Types;
 
 namespace Apparser.Parser
 {
-    public abstract class Parser
-    {
-        public abstract Result<string, Unit> Run<TSave>(IParserInput input);
-    }
 
     public abstract class Parser<TIn> : IEquatable<Parser<TIn>>
     {
@@ -25,7 +22,7 @@ namespace Apparser.Parser
 
         public virtual Parser<TIn> OrElse(Parser<TIn> other)
         {
-            return EitherOf<TIn>.Create(this, other);
+            return AnyOf<TIn>.Create(this, other);
         }
 
         public virtual Parser<TIn> Many(int min = 0, int max = int.MaxValue)
@@ -33,8 +30,13 @@ namespace Apparser.Parser
             return Many<TIn>.Create(this, min, max);
         }
 
-        public abstract string Name { get; }
 
+        public virtual Parser<TIn> Then(Parser<TIn> other)
+        {
+            return ThenParser<TIn>.Create(this, other);
+        }
+
+        public abstract string Name { get; }
         public abstract bool CanMatchWithoutConsumingInput { get; }
     }
     
@@ -47,11 +49,6 @@ namespace Apparser.Parser
         /// <typeparam name="TSave"></typeparam>
         /// <param name="input">The input source.</param>
         /// <returns>A <see cref="Result{TFail,TSuccess}"/> representing the parse result.</returns>
-        public override Result<string, Unit> Run<TSave>(IParserInput<TIn, TSave> input)
-        {
-            return RunWithResult(input).SelectSuccess(_ => default(Unit));
-        }
-
         public abstract Result<string, TOut> RunWithResult<TSave>(IParserInput<TIn,TSave> input) where TSave : IEquatable<TSave>;
 
         public static Parser<TIn, TOut> operator |(Parser<TIn, TOut> left, Parser<TIn, TOut> right)
@@ -66,7 +63,12 @@ namespace Apparser.Parser
 
         public virtual new Parser<TIn, TOut> OrElse(Parser<TIn, TOut> other)
         {
-            return EitherOf<TIn, TOut>.Create(this, other);
+            return AnyOf<TIn, TOut>.Create(this, other);
+        }
+
+        public virtual new Parser<TIn, TOut> Then(Parser<TIn, TOut> other)
+        {
+            return ThenParser<TIn, TOut>.Create(this, other);
         }
         
         ///// <summary>
@@ -128,6 +130,11 @@ namespace Apparser.Parser
             return parser.Select(_ => items);
         }
 
+        public static Parser<TIn> Ignore<TIn,TOut>(this Parser<TIn, TOut> parser)
+        {
+            return parser;
+        }
+
         public static Parser<TIn, TOut> Select<TIn, TMid, TOut>(this Parser<TIn, TMid> parser,
                                                                 Func<TMid, TOut> projection)
         {
@@ -166,24 +173,14 @@ namespace Apparser.Parser
             return new Exactly<T>(item);
         }
 
-        public static Parser<T, T> Satisfy<T>(Func<T, bool> predicate)
+        public static Parser<T, T> Satisfy<T>(Expression<Func<T, bool>> predicate)
         {
             return new Satisfy<T>(predicate);
         }
 
-        public static Parser<TIn> Then<TIn>(this Parser<TIn> first, Parser<TIn> second)
+        public static Parser<TIn> EndOfInput<TIn>()
         {
-            return new Then<TIn>(first, second);
-        }
-
-        public static Parser<TIn, TOut> Then<TIn, TOut>(this Parser<TIn> first, Parser<TIn, TOut> second)
-        {
-            return new Then<TIn, TOut>(first, second);
-        }
-
-        public static Parser<TIn> EOF<TIn>()
-        {
-            return EOFValue<TIn>.Instance;
+            return Combinators.EndOfInput<TIn>.Instance;
         }
 
         public static Parser<TIn> Many<TIn>(this Parser<TIn> parser, int min = 0, int max = int.MaxValue)
@@ -229,7 +226,15 @@ namespace Apparser.Parser
 
         public static Parser<TIn> Name<TIn>(this Parser<TIn> parser, string name)
         {
+            return parser;
             return new Named<TIn>(parser, name);
+        }
+
+
+        public static Parser<TIn, TOut> Name<TIn, TOut>(this Parser<TIn, TOut> parser, string name)
+        {
+            return parser;
+            return new Named<TIn, TOut>(parser, name);
         }
 
         public static Parser<TIn> SkipWhile<TIn>(Func<TIn, bool> predicate, int min = 0, int max = int.MaxValue)
