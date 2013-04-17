@@ -40,6 +40,11 @@ namespace Apparser.Parser
             return ThenParser<TIn, TOut>.Create(this, other);
         }
 
+        public static implicit operator Parser<TIn>(TIn something)
+        {
+            return Parser.Exactly(something);
+        }
+
         public abstract string Name { get; }
         public abstract bool CanMatchWithoutConsumingInput { get; }
     }

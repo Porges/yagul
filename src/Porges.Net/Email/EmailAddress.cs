@@ -54,7 +54,7 @@ namespace Porges.Net.Email
                                                   c >= 14 && c <= 31 ||
                                                   c == 127);
 
-            var nullChar = Parser.Exactly('\0');
+            var nullChar = '\0';
 
             var fws =
                 (crlf.Then(wsp1).Many(1) |
@@ -75,7 +75,7 @@ namespace Porges.Net.Email
 
             commentParser.Parser = Parser.Exactly('(')
                 .Then((commentContent | fws).Many())
-                .Then(Parser.Exactly(')'));
+                .Then(')');
 
             var cfws = (fws | comment).Many().Name("cfws");
 
@@ -94,13 +94,13 @@ namespace Porges.Net.Email
             var quotedString = Parser.Exactly('"')
                                 .Then(fws.Optional().Then(quotedContent).Many())
                                 .Then(fws.Optional())
-                                .Then(Parser.Exactly('"')).Name("quoted string");
+                                .Then('"').Name("quoted string");
 
             var dottedAtoms = 
                 cfws.Optional()
                 .Then(atom | quotedString)
                 .Then(cfws.Optional())
-                .SepBy(Parser.Exactly('.'), 1).Name("dotted atoms");
+                .SepBy('.', 1).Name("dotted atoms");
 
             var domainText = Parser.Satisfy<char>(c =>
                                                   c >= 33 && c <= 90 ||
@@ -109,15 +109,15 @@ namespace Porges.Net.Email
                                                   quotedPair;
 
             var domainLiteral = cfws.Optional()
-                .Then(Parser.Exactly('['))
+                .Then('[')
                 .Then(fws.Optional().Then(domainText).Many())
                 .Then(fws.Optional())
-                .Then(Parser.Exactly(']').Then(cfws.Optional())).Name("domain literal");
+                .Then(']').Then(cfws.Optional()).Name("domain literal");
 
             var local = dottedAtoms.Name("local-part");
             var domain = (dottedAtoms | domainLiteral).Name("domain-part");
 
-            var email = local.Then(Parser.Exactly('@')).Then(domain).Then(Parser.EndOfInput<char>());
+            var email = local.Then('@').Then(domain).Then(Parser.EndOfInput<char>());
 
             return email;
         }
