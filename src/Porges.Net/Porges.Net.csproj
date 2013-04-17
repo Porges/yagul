@@ -32,9 +32,6 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Outcomes">
-      <HintPath>..\..\..\..\GitHub\yagul\src\Apparser\bin\Debug\Outcomes.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -60,6 +57,10 @@
     <ProjectReference Include="..\..\..\..\GitHub\yagul\src\Yagul\Yagul.csproj">
       <Project>{cd504ced-8111-4c56-88f4-cb4b7c3948ec}</Project>
       <Name>Yagul</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Outcomes\Outcomes.csproj">
+      <Project>{9f56f06f-3e3e-4756-8fef-d2b5b291e918}</Project>
+      <Name>Outcomes</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
