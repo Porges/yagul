@@ -50,11 +50,11 @@
     <Compile Include="SimpleParser.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\GitHub\yagul\src\Apparser\Apparser.csproj">
+    <ProjectReference Include="..\Apparser\Apparser.csproj">
       <Project>{4005f152-0a8d-42ff-a152-3ec5e48add21}</Project>
       <Name>Apparser</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\..\GitHub\yagul\src\Yagul\Yagul.csproj">
+    <ProjectReference Include="..\Yagul\Yagul.csproj">
       <Project>{cd504ced-8111-4c56-88f4-cb4b7c3948ec}</Project>
       <Name>Yagul</Name>
     </ProjectReference>
