@@ -54,7 +54,7 @@ namespace ConsoleApplication1
                 }
                 timer3.Stop();
 
-                if (run == 0)
+                if (run == 0) // warmup round
                 {
                     timer1.Reset();
                     timer2.Reset();
@@ -70,10 +70,10 @@ namespace ConsoleApplication1
         static void TestParser()
         {
             var parseComplicated =
-                ParserExtensions.Satisfy<char>(Char.IsWhiteSpace).Many().Then(
-                    from he in ParserExtensions.ExactSequence<string, char>("he")
-                    from ll in ParserExtensions.ExactSequence<string, char>("ll")
-                    from o in ParserExtensions.ExactSequence<string, char>("o")
+                Parser.Satisfy<char>(x => char.IsWhiteSpace(x)).Many().Then(
+                    from he in Parser.ExactSequence<string, char>("he")
+                    from ll in Parser.ExactSequence<string, char>("ll")
+                    from o in Parser.ExactSequence<string, char>("o")
                     select string.Concat(he, ll, o));
 
             var resultComplicated = parseComplicated.RunWithResult(new StringParser("   hello"));
@@ -87,10 +87,10 @@ namespace ConsoleApplication1
             Console.WriteLine("---");
 
             var parser
-                = (ParserExtensions.ExactSequence<string, char>("hello")
-                   | ParserExtensions.Satisfy<char>(char.IsWhiteSpace).Select(c => c.ToString())
-                   | ParserExtensions.ExactSequence<string, char>("world")
-                   | ParserExtensions.Exactly('w').Select(c => c.ToString())).Many();
+                = (Parser.ExactSequence<string, char>("hello")
+                   | Parser.Satisfy<char>(x => char.IsWhiteSpace(x)).Select(c => c.ToString())
+                   | Parser.ExactSequence<string, char>("world")
+                   | Parser.Exactly('w').Select(c => c.ToString())).ManyList();
 
             var result = parser
                 .RunWithResult(new StringParser(" wworldhello"));

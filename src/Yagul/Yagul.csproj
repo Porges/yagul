@@ -100,7 +100,6 @@
     <Compile Include="Extensions\FuncExtensions.cs" />
     <Compile Include="Extensions\ListExtensions.cs" />
     <Compile Include="Objects.cs" />
-    <Compile Include="Observers.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Types\Any.cs" />
   </ItemGroup>

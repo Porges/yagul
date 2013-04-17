@@ -6,13 +6,15 @@ using Yagul.Types;
 
 namespace Apparser.Parser.Combinators
 {
-    internal sealed class Many<TIn, TOut> : Parser<TIn, IList<TOut>>, IEquatable<Many<TIn, TOut>>
+    internal sealed class Many<TIn, TOut, TAgg> : Parser<TIn, TAgg>, IEquatable<Many<TIn, TOut, TAgg>>
     {
         private readonly Parser<TIn, TOut> _parser;
         private readonly int _min;
         private readonly int _max;
+        private readonly Func<TAgg> _initialValue;
+        private readonly Func<TAgg, TOut, TAgg> _aggregator;
 
-        private Many(Parser<TIn, TOut> parser, int min, int max)
+        private Many(Parser<TIn, TOut> parser, int min, int max, Func<TAgg> initialValue, Func<TAgg, TOut, TAgg> aggregator)
         {
             if (parser.CanMatchWithoutConsumingInput && max > 1)
                 throw new ArgumentException("You cannot use nonconsuming parsers with Many");
@@ -20,6 +22,8 @@ namespace Apparser.Parser.Combinators
             _parser = parser;
             _min = min;
             _max = max;
+            _initialValue = initialValue;
+            _aggregator = aggregator;
         }
 
         public override Result<string, Unit> Run<TSave>(IParserInput<TIn, TSave> input)
@@ -47,37 +51,37 @@ namespace Apparser.Parser.Combinators
 
         public override bool Equals(Parser<TIn> other)
         {
-            return Equals(other as Many<TIn, TOut>);
+            return Equals(other as Many<TIn, TOut, TAgg>);
         }
 
-        public override Result<string, IList<TOut>> RunWithResult<TSave>(IParserInput<TIn, TSave> input)
+        public override Result<string, TAgg> RunWithResult<TSave>(IParserInput<TIn, TSave> input)
         {
             var count = 0;
-            var list = new List<TOut>();
+            var list = _initialValue();
             var saved = input.Save();
             var result = _parser.RunWithResult(input);
 
             TOut success;
             while (result.TryGetSuccess(out success))
             {
-                list.Add(success);
+                list = _aggregator(list, success);
 
                 if (++count == _max)
-                    return new Outcomes.Success<string, IList<TOut>>(list);
+                    return new Outcomes.Success<string, TAgg>(list);
 
                 saved = input.Save();
                 result = _parser.RunWithResult(input);
             }
 
             if (count < _min)
-                return new Failure<string, IList<TOut>>("");//string.Format("Expected at least {0} copies of ({2}), only found {1}.", _min, count, _parser.Name));
+                return new Failure<string, TAgg>("");//string.Format("Expected at least {0} copies of ({2}), only found {1}.", _min, count, _parser.Name));
 
             // the last one failed so restore the position
             input.Restore(saved);
-            return new Outcomes.Success<string, IList<TOut>>(list);
+            return new Outcomes.Success<string, TAgg>(list);
         }
 
-        public bool Equals(Many<TIn, TOut> other)
+        public bool Equals(Many<TIn, TOut, TAgg> other)
         {
             return other != null &&
                    Equals(_parser, other._parser) &&
@@ -85,13 +89,11 @@ namespace Apparser.Parser.Combinators
                    _max == other._max;
         }
 
-        public static Parser<TIn, IList<TOut>> Create(Parser<TIn, TOut> parser, int min, int max)
+        public static Parser<TIn, TAgg> Create(Parser<TIn, TOut> parser, int min, int max, Func<TAgg> initialValue, Func<TAgg,TOut,TAgg> aggregator)
         {
-            if (min == 1 && max == 1)
-                return parser.Select(x => (IList<TOut>) new[] {x});
-
-            return new Many<TIn, TOut>(parser, min, max);
+            return new Many<TIn, TOut, TAgg>(parser, min, max, initialValue, aggregator);
         }
+
         public override string Name
         {
             get

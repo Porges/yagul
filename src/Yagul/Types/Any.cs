@@ -33,6 +33,16 @@ namespace Yagul.Types
         {
             return obj is Unit;
         }
+        
+        public static bool operator ==(Unit left, Unit right)
+        {
+            return true;
+        }
+
+        public static bool operator !=(Unit left, Unit right)
+        {
+            return false;
+        }
 
         public override string ToString()
         {

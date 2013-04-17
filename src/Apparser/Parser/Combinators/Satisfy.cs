@@ -56,15 +56,13 @@ namespace Apparser.Parser.Combinators
 
             return new Failure<string, T>("Could not satisfy predicate.");
         }
-        
-        public override Parser<T, IList<T>> Many(int min, int max)
+
+        public override Parser<T, TAgg> Many<TAgg>(int min, int max, Func<TAgg> agg, Func<TAgg, T, TAgg> aggregation)
         {
-            if (min == 1 && max == 1)
-                return this.Select(x => (IList<T>)new[]{x});
-
-            return new TakeWhile<T>(_compiled, min, max);
+            //TODO: TakeWhile
+            return base.Many<TAgg>(min, max, agg, aggregation);
         }
-
+        
         public override bool Equals(Parser<T> other)
         {
             return Equals(other as Satisfy<T>);

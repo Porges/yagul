@@ -5,7 +5,7 @@ using Yagul.Types;
 
 namespace Apparser.Parser.Combinators
 {
-    internal sealed class Fail<T> : Parser<T>, IEquatable<Fail<T>>
+    internal sealed class Fail<T, TOut> : Parser<T, TOut>, IEquatable<Fail<T, TOut>>
     {
         private readonly string _message;
 
@@ -26,10 +26,10 @@ namespace Apparser.Parser.Combinators
 
         public override bool Equals(Parser<T> other)
         {
-            return Equals(other as Fail<T>);
+            return Equals(other as Fail<T, TOut>);
         }
 
-        public bool Equals(Fail<T> other)
+        public bool Equals(Fail<T, TOut> other)
         {
             return other != null;
         }
@@ -41,6 +41,11 @@ namespace Apparser.Parser.Combinators
         public override bool CanMatchWithoutConsumingInput
         {
             get { return false; }
+        }
+
+        public override Result<string, TOut> RunWithResult<TSave>(IParserInput<T, TSave> input)
+        {
+            return new Failure<string, TOut>(_message);
         }
     }
 }

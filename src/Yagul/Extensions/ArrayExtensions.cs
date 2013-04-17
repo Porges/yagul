@@ -68,7 +68,7 @@ namespace Yagul.Extensions
             return result;
         }
 
-        // this is a giant hack
+        // this is a giant hack :D
         private static readonly FieldInfo _listArray = typeof(List<byte>).GetField("_items", BindingFlags.NonPublic | BindingFlags.Instance);
         private static byte[] GetListBackingArray(List<byte> list)
         {

@@ -8,8 +8,13 @@ namespace Outcomes
     /// </summary>
     /// <typeparam name="TFail">The type of failed computations.</typeparam>
     /// <typeparam name="TSuccess">The type of successful computations.</typeparam>
-    public interface Result<TFail, TSuccess>
+    public abstract class Result<TFail, TSuccess>
     {
+        internal Result()
+        {
+            // there are only two values here.
+        }
+
         //public static implicit operator Result<TFail, TSuccess>(Result<Any, TSuccess> any)
         //{
         //    var failed = (Success<Any, TSuccess>)any;
@@ -34,17 +39,17 @@ namespace Outcomes
         //    return new Success<TFail, TSuccess>(value);
         //}
 
-        bool IsSuccess { get; }
-        bool IsFailure { get; }
+        public abstract bool IsSuccess { get; }
+        public abstract bool IsFailure { get; }
         
-        bool TryGetSuccess(out TSuccess success);
-        bool TryGetFailure(out TFail failure);
+        public abstract bool TryGetSuccess(out TSuccess success);
+        public abstract bool TryGetFailure(out TFail failure);
 
-        Result<TFail, TNewSuccess> SelectSuccess<TNewSuccess>(Func<TSuccess, TNewSuccess> projection);
-        Result<TNewFailure, TSuccess> SelectFailure<TNewFailure>(Func<TFail, TNewFailure> projection);
+        public abstract Result<TFail, TNewSuccess> SelectSuccess<TNewSuccess>(Func<TSuccess, TNewSuccess> projection);
+        public abstract Result<TNewFailure, TSuccess> SelectFailure<TNewFailure>(Func<TFail, TNewFailure> projection);
 
-        Result<TFail, TNewSuccess> SelectManySuccess<TNewSuccess>(Func<TSuccess, Result<TFail, TNewSuccess>> projection);
-        Result<TNewFailure, TSuccess> SelectManyFailure<TNewFailure>(Func<TFail, Result<TNewFailure, TSuccess>> projection);
+        public abstract Result<TFail, TNewSuccess> SelectManySuccess<TNewSuccess>(Func<TSuccess, Result<TFail, TNewSuccess>> projection);
+        public abstract Result<TNewFailure, TSuccess> SelectManyFailure<TNewFailure>(Func<TFail, Result<TNewFailure, TSuccess>> projection);
     }
 
     public static class Result
@@ -82,7 +87,7 @@ namespace Outcomes
         }
     }
 
-    public struct Success<TIgnored, T> : Result<TIgnored, T>
+    public sealed class Success<TIgnored, T> : Result<TIgnored, T>
     {
         private readonly T _value;
 
@@ -93,50 +98,50 @@ namespace Outcomes
 
         public T Value { get { return _value; } }
 
-        public bool IsSuccess
+        public override bool IsSuccess
         {
             get { return true; }
         }
 
-        public bool IsFailure
+        public override bool IsFailure
         {
             get { return false; }
         }
 
-        public bool TryGetSuccess(out T success)
+        public override bool TryGetSuccess(out T success)
         {
             success = Value;
             return true;
         }
 
-        public bool TryGetFailure(out TIgnored failure)
+        public override bool TryGetFailure(out TIgnored failure)
         {
             failure = default(TIgnored);
             return false;
         }
 
-        public Result<TIgnored, TNewSuccess> SelectSuccess<TNewSuccess>(Func<T, TNewSuccess> projection)
+        public override Result<TIgnored, TNewSuccess> SelectSuccess<TNewSuccess>(Func<T, TNewSuccess> projection)
         {
             return new Success<TIgnored,TNewSuccess>(projection(Value));
         }
 
-        public Result<TNewFailure, T> SelectFailure<TNewFailure>(Func<TIgnored, TNewFailure> projection)
+        public override Result<TNewFailure, T> SelectFailure<TNewFailure>(Func<TIgnored, TNewFailure> projection)
         {
             return new Success<TNewFailure, T>(Value);
         }
 
-        public Result<TIgnored, TNewSuccess> SelectManySuccess<TNewSuccess>(Func<T, Result<TIgnored, TNewSuccess>> projection)
+        public override Result<TIgnored, TNewSuccess> SelectManySuccess<TNewSuccess>(Func<T, Result<TIgnored, TNewSuccess>> projection)
         {
             return projection(Value);
         }
 
-        public Result<TNewFailure, T> SelectManyFailure<TNewFailure>(Func<TIgnored, Result<TNewFailure, T>> projection)
+        public override Result<TNewFailure, T> SelectManyFailure<TNewFailure>(Func<TIgnored, Result<TNewFailure, T>> projection)
         {
             return new Success<TNewFailure, T>(Value);
         }
     }
 
-    public struct Failure<T, TIgnored> : Result<T, TIgnored>
+    public sealed class Failure<T, TIgnored> : Result<T, TIgnored>
     {
         private readonly T _value;
         
@@ -147,44 +152,44 @@ namespace Outcomes
 
         public T Value { get { return _value; } }
 
-        public bool IsSuccess
+        public override bool IsSuccess
         {
             get { return false; }
         }
 
-        public bool IsFailure
+        public override bool IsFailure
         {
             get { return true; }
         }
 
-        public bool TryGetSuccess(out TIgnored success)
+        public override bool TryGetSuccess(out TIgnored success)
         {
             success = default(TIgnored);
             return false;
         }
 
-        public bool TryGetFailure(out T failure)
+        public override bool TryGetFailure(out T failure)
         {
             failure = Value;
             return true;
         }
 
-        public Result<T, TNewSuccess> SelectSuccess<TNewSuccess>(Func<TIgnored, TNewSuccess> projection)
+        public override Result<T, TNewSuccess> SelectSuccess<TNewSuccess>(Func<TIgnored, TNewSuccess> projection)
         {
             return new Failure<T,TNewSuccess>(Value);
         }
 
-        public Result<TNewFailure, TIgnored> SelectFailure<TNewFailure>(Func<T, TNewFailure> projection)
+        public override Result<TNewFailure, TIgnored> SelectFailure<TNewFailure>(Func<T, TNewFailure> projection)
         {
             return new Failure<TNewFailure, TIgnored>(projection(Value));
         }
 
-        public Result<T, TNewSuccess> SelectManySuccess<TNewSuccess>(Func<TIgnored, Result<T, TNewSuccess>> projection)
+        public override Result<T, TNewSuccess> SelectManySuccess<TNewSuccess>(Func<TIgnored, Result<T, TNewSuccess>> projection)
         {
             return new Failure<T,TNewSuccess>(Value);
         }
 
-        public Result<TNewFailure, TIgnored> SelectManyFailure<TNewFailure>(Func<T, Result<TNewFailure, TIgnored>> projection)
+        public override Result<TNewFailure, TIgnored> SelectManyFailure<TNewFailure>(Func<T, Result<TNewFailure, TIgnored>> projection)
         {
             return projection(Value);
         }

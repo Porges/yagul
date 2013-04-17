@@ -25,7 +25,9 @@ namespace Yagul.Extensions
         {
             TValue result;
             if (!@this.TryGetValue(key, out result))
+            {
                 result = defaultValue;
+            }
 
             return result;
         }

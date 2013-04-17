@@ -1,15 +1,16 @@
 ﻿using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Yagul")]
+[assembly: AssemblyTitle("Porges.Net.Tests")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("Yagul")]
-[assembly: AssemblyCopyright("Copyright © George Pollard 2012-2013")]
+[assembly: AssemblyProduct("Porges.Net.Tests")]
+[assembly: AssemblyCopyright("Copyright ©  2013")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -19,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("80e7f175-af56-4256-bbf5-e762a96e836f")]
+[assembly: Guid("eb309d1e-a25b-420c-b7bf-8bf55d5370fa")]
 
 // Version information for an assembly consists of the following four values:
 //
