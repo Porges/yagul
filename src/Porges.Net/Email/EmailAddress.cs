@@ -50,7 +50,7 @@ namespace Porges.Net.Email
 
             var obsNoWsCtl = Parser.Satisfy<char>(c =>
                                                   c >= 1 && c <= 8 ||
-                                                  c == 11 && c == 12 ||
+                                                  c == 11 || c == 12 ||
                                                   c >= 14 && c <= 31 ||
                                                   c == 127);
 
