@@ -35,7 +35,7 @@ namespace Porges.Net.Tests
                 string reason;
                 Assert.AreEqual(valid,
                     EmailAddress.TryParse(sanitisedEmail, out ea, out reason),
-                    "Id is: {3}\r\nEmail address is: {0} (sanitised: {5})\r\nCategory is: {1}\r\nDiagnosis is: {2}\r\nMy failure reason is: {4}", email, category, diagnosis,id,reason,sanitisedEmail);
+                    "Id is: {3}\r\nEmail address is: {0} (sanitised: {5})\r\nCategory is: {1}\r\nDiagnosis is: {2}\r\nMy failure reason is: {4}", email, category, diagnosis, id, reason, sanitisedEmail);
             }
         }
 
