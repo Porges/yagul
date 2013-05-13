@@ -21,6 +21,7 @@ namespace ConsoleApplication1
             var timer1 = new Stopwatch();
             var timer2 = new Stopwatch();
             var timer3 = new Stopwatch();
+            var timer4 = new Stopwatch();
 
             var rubbish = "rubbish";
             var encodedRubbish2 = new EncodedString<UTF8Encoding>(rubbish);
@@ -54,17 +55,27 @@ namespace ConsoleApplication1
                 }
                 timer3.Stop();
 
+                timer4.Start();
+                var result4 = new StringBuilder();
+                for (int iteration = 0; iteration < iterations; ++iteration)
+                {
+                    result4.Append(rubbish);
+                }
+                timer4.Stop();
+
                 if (run == 0) // warmup round
                 {
                     timer1.Reset();
                     timer2.Reset();
                     timer3.Reset();
+                    timer4.Reset();
                 }
             }
 
             Console.WriteLine("timer1: {0}", timer1.ElapsedMilliseconds);
             Console.WriteLine("timer2: {0}", timer2.ElapsedMilliseconds);
             Console.WriteLine("timer3: {0}", timer3.ElapsedMilliseconds);
+            Console.WriteLine("timer4: {0}", timer4.ElapsedMilliseconds);
         }
 
         static void TestParser()
