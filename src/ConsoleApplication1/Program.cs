@@ -27,7 +27,7 @@ namespace ConsoleApplication1
             var encodedRubbish2 = new EncodedString<UTF8Encoding>(rubbish);
             var encodedRubbish3 = new EncodedString<UnicodeEncoding>(rubbish);
             const int iterations = 10000;
-            const int runs = 20;
+            const int runs = 80;
 
             for (var run = 0; run < runs+1; ++run)
             {
@@ -65,6 +65,11 @@ namespace ConsoleApplication1
 
                 if (run == 0) // warmup round
                 {
+                    Console.WriteLine(result.Length);
+                    Console.WriteLine(result2.CountBytes);
+                    Console.WriteLine(result3.CountBytes);
+                    Console.WriteLine(result4.Length);
+
                     timer1.Reset();
                     timer2.Reset();
                     timer3.Reset();

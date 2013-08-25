@@ -25,5 +25,10 @@ namespace Strung
         {
             return _value == other._value;
         }
+
+        public override string ToString()
+        {
+            return _value.ToString();
+        }
     }
 }

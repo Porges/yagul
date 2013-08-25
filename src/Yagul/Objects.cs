@@ -18,6 +18,15 @@ namespace Yagul
             left = right;
             right = tmp;
         }
+
+        /// <summary>
+        /// Simplifies casting to a base class.
+        /// </summary>
+        [PublicAPI]
+        public static T As<T>(this T obj)
+        {
+            return obj;
+        }
     }
 
     public static class Arrays<T>

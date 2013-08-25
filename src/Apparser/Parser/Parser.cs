@@ -4,11 +4,11 @@ using System.Linq.Expressions;
 using Apparser.Input;
 using Apparser.Parser.Combinators;
 using Outcomes;
+using Yagul;
 using Yagul.Types;
 
 namespace Apparser.Parser
 {
-
     public abstract class Parser<TIn> : IEquatable<Parser<TIn>>
     {
         public abstract Result<string, Unit> Run<TSave>(IParserInput<TIn, TSave> input) where TSave : IEquatable<TSave>;
@@ -65,17 +65,17 @@ namespace Apparser.Parser
             return left.OrElse(right);
         }
 
-        public virtual new Parser<TIn, TAgg> Many<TAgg>(int min, int max, Func<TAgg> agg, Func<TAgg, TOut, TAgg> aggregation)
+        public virtual Parser<TIn, TAgg> Many<TAgg>(int min, int max, Func<TAgg> agg, Func<TAgg, TOut, TAgg> aggregation)
         {
             return Many<TIn, TOut, TAgg>.Create(this, min, max, agg, aggregation);
         }
 
-        public virtual new Parser<TIn, TOut> OrElse(Parser<TIn, TOut> other)
+        public virtual Parser<TIn, TOut> OrElse(Parser<TIn, TOut> other)
         {
             return AnyOf<TIn, TOut>.Create(this, other);
         }
 
-        public virtual new Parser<TIn, TOut> Then(Parser<TIn, TOut> other)
+        public virtual Parser<TIn, TOut> Then(Parser<TIn, TOut> other)
         {
             return ThenParser<TIn, TOut>.Create(this, other);
         }
@@ -114,6 +114,9 @@ namespace Apparser.Parser
 
     }
 
+    /// <summary>
+    /// Smart constructors for parsers.
+    /// </summary>
     public static class Parser
     {
         public static Parser<T, T> Any<T>()
@@ -161,7 +164,7 @@ namespace Apparser.Parser
         {
             return parser.SelectMany(x => projection(x).Select(y => nextProjection(x, y)));
         }
-        
+
         public static Parser<T> Fail<T>(string message)
         {
             return new Fail<T, Unit>(message);
@@ -170,13 +173,14 @@ namespace Apparser.Parser
         public static Parser<TIn, IList<TOut>> ManyList<TIn, TOut>(this Parser<TIn, TOut> input, int min = 0,
                                                                int max = int.MaxValue)
         {
-            return input.Many(min, max, () => (IList<TOut>) new List<TOut>(), (prev, next) =>
-                                                                                  {
-                                                                                      prev.Add(next);
-                                                                                      return prev;
-                                                                                  });
+            return input.Many(min, max,
+            () => new List<TOut>().As<IList<TOut>>(),
+            (prev, next) =>
+            {
+                prev.Add(next);
+                return prev;
+            });
         }
-
 
         public static Parser<TIn, TOut> FollowedBy<TIn,TOut>(this Parser<TIn, TOut> previous, Parser<TIn> next)
         {

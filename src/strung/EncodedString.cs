@@ -14,13 +14,16 @@ namespace Strung
     [PublicAPI]
     public class EncodedString<T> : IEquatable<EncodedString<T>>, IReadOnlyList<byte>, IReadOnlyList<UChar> where T : Encoding, new()
     {
+        private static T _encoding = new T();
+
         [NotNull]
         internal ExtendablePersistentList<byte> _bytes;
 
         public EncodedString() : this(Arrays<byte>.Empty)
         { }
 
-        public EncodedString(string other) : this(other.Length == 0 ? Arrays<byte>.Empty : new T().GetBytes(other))
+        public EncodedString(string other)
+            : this(other.Length == 0 ? Arrays<byte>.Empty : _encoding.GetBytes(other))
         {
             if (other == null)
                 throw new ArgumentNullException("other");
@@ -83,7 +86,7 @@ namespace Strung
         }
 
         public Count<byte> CountBytes { get { return _bytes.Count; } }
-        public Count<UChar> CountChars { get { return new T().GetCharCount(_bytes.ToArray()); /* TODO */ } } 
+        public Count<UChar> CountChars { get { return _encoding.GetCharCount(_bytes.ToArray()); /* TODO */ } } 
 
         /// <summary>
         /// Returns the byte at the specified index.
@@ -141,7 +144,7 @@ namespace Strung
 
         public override string ToString()
         {
-            return new T().GetString(_bytes.ToArray());
+            return _encoding.GetString(_bytes.ToArray());
         }
 
         IEnumerator IEnumerable.GetEnumerator()
@@ -158,7 +161,7 @@ namespace Strung
             if (typeof(TNewEncoding) == typeof(UTF8Encoding) && typeof(T) == typeof(ASCIIEncoding))
                 return new EncodedString<TNewEncoding>(_bytes);
 
-            return new EncodedString<TNewEncoding>(new TNewEncoding().GetBytes(new T().GetString(_bytes.ToArray())));
+            return new EncodedString<TNewEncoding>(new TNewEncoding().GetBytes(_encoding.GetString(_bytes.ToArray())));
         }
     }
 }
