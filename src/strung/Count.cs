@@ -21,6 +21,11 @@ namespace Strung
             return new Count<T>(value);
         }
 
+        public static Count<T> operator +(Count<T> left, Count<T> right)
+        {
+            return left.Value + right.Value;
+        }
+
         public bool Equals(Count<T> other)
         {
             return _value == other._value;

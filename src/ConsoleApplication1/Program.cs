@@ -2,9 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
-using Apparser;
 using Apparser.Parser;
-using Outcomes;
 using Strung;
 
 namespace ConsoleApplication1
@@ -24,8 +22,8 @@ namespace ConsoleApplication1
             var timer4 = new Stopwatch();
 
             var rubbish = "rubbish";
-            var encodedRubbish2 = new EncodedString<UTF8Encoding>(rubbish);
-            var encodedRubbish3 = new EncodedString<UnicodeEncoding>(rubbish);
+            EncodedString<UTF8Encoding> encodedRubbish2 = rubbish;
+            EncodedString<UnicodeEncoding> encodedRubbish3 = rubbish;
             const int iterations = 10000;
             const int runs = 80;
 
@@ -40,7 +38,7 @@ namespace ConsoleApplication1
                 timer1.Stop();
 
                 timer2.Start();
-                var result2 = new EncodedString<UTF8Encoding>();
+                EncodedString<UTF8Encoding> result2 = "";
                 for (int iteration = 0; iteration < iterations; ++iteration)
                 {
                     result2 += encodedRubbish2;
@@ -48,7 +46,7 @@ namespace ConsoleApplication1
                 timer2.Stop();
 
                 timer3.Start();
-                var result3 = new EncodedString<UnicodeEncoding>();
+                EncodedString<UnicodeEncoding> result3 = "";
                 for (int iteration = 0; iteration < iterations; ++iteration)
                 {
                     result3 += encodedRubbish3;

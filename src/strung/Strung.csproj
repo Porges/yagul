@@ -47,7 +47,7 @@
   <ItemGroup>
     <Compile Include="CharacterProperties\GeneralCategory.cs" />
     <Compile Include="Count.cs" />
-    <Compile Include="EncodedString.cs" />
+    <Compile Include="AnyEncodedString.cs" />
     <Compile Include="IUnicodeString.cs" />
     <Compile Include="Ix.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
